@@ -1,5 +1,7 @@
 import Axios from 'axios';
 
+Axios.defaults.withCredentials = true;
+
 // Add a request interceptor
 Axios.interceptors.request.use(
 	function (config) {

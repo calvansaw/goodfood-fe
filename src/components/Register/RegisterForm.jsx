@@ -5,22 +5,26 @@ import {
 	Input,
 	InputLabel,
 	InputAdornment,
+	Select,
+	FormHelperText,
+	MenuItem,
 	Button,
 } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
-import useStyles from './LoginForm.styles';
+import useStyles from './RegisterForm.styles';
 import { useFormik } from 'formik';
-import SignIn from '../../endpoints/SignIn';
+import Register from '../../endpoints/Register';
 
-const Login = () => {
+const RegisterForm = () => {
 	const { values, handleChange, handleSubmit } = useFormik({
 		initialValues: {
 			username: '',
 			password: '',
+			userType: '',
 		},
 		onSubmit: (values) => {
 			console.log(values);
-			SignIn(values.username, values.password);
+			Register(values.username, values.password, values.userType);
 		},
 	});
 
@@ -65,9 +69,24 @@ const Login = () => {
 					</InputAdornment>
 				}
 			/>
+			<InputLabel id="userType">User Type</InputLabel>
+			<Select
+				className={clsx(classes.selectField)}
+				labelId="userType"
+				id="userType"
+				name="userType"
+				value={values.userType}
+				onChange={handleChange}
+			>
+				<MenuItem value="owner">Owner</MenuItem>
+				<MenuItem value="public">Public</MenuItem>
+			</Select>
+			<FormHelperText>
+				Select Owner to start registering your store with us!
+			</FormHelperText>
 			<Button type="submit">Submit</Button>
 		</form>
 	);
 };
 
-export default Login;
+export default RegisterForm;

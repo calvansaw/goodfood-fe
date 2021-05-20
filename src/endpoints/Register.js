@@ -1,12 +1,13 @@
 import Axios from '../utils/Axios';
 
-const signIn = async (username, password) => {
+const register = async (username, password, userType) => {
 	try {
 		const { data } = await Axios.post(
-			`${process.env.REACT_APP_BACKEND_URL}/auth/login`,
+			`${process.env.REACT_APP_BACKEND_URL}/auth/signup`,
 			{
 				username,
 				password,
+				userType,
 			}
 		);
 		console.log(data);
@@ -17,4 +18,4 @@ const signIn = async (username, password) => {
 	}
 };
 
-export default signIn;
+export default register;

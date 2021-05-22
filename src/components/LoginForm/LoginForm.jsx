@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import clsx from 'clsx';
 import {
 	IconButton,
@@ -10,20 +10,29 @@ import {
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import useStyles from './LoginForm.styles';
 import { useFormik } from 'formik';
+import { AuthContext } from '../../contexts/AuthContext';
 import SignIn from '../../endpoints/SignIn';
 
-const Login = () => {
-	const { values, handleChange, handleSubmit } = useFormik({
+const LoginForm = () => {
+	const { state, dispatch } = useContext(AuthContext);
+	const { values, handleChange, handleSubmit, isSubmitting } = useFormik({
 		initialValues: {
 			username: '',
 			password: '',
 		},
-		onSubmit: (values) => {
+		onSubmit: async (values) => {
 			console.log(values);
-			SignIn(values.username, values.password);
+			const data = await SignIn(values.username, values.password);
+			console.log(data);
+			data &&
+				dispatch({
+					type: 'LOGIN',
+					data,
+				});
 		},
 	});
-
+	console.log(state);
+	console.log('is submitting form:', isSubmitting);
 	const classes = useStyles();
 	const [showPassword, setShowPassword] = useState(false);
 
@@ -70,4 +79,4 @@ const Login = () => {
 	);
 };
 
-export default Login;
+export default LoginForm;

@@ -12,6 +12,7 @@ const signIn = async (username, password) => {
 		console.log(data);
 		localStorage.setItem('access', data.accessToken);
 		localStorage.setItem('refresh', data.refreshToken);
+		return data;
 	} catch (err) {
 		console.log(err);
 	}

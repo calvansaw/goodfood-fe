@@ -13,6 +13,7 @@ const register = async (username, password, userType) => {
 		console.log(data);
 		localStorage.setItem('access', data.accessToken);
 		localStorage.setItem('refresh', data.refreshToken);
+		return data;
 	} catch (err) {
 		console.log(err);
 	}

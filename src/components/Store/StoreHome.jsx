@@ -12,16 +12,18 @@ import {
 // import useStyles from './XXXForm.styles';
 import { Formik, useFormik } from 'formik';
 import { AuthContext } from '../../contexts/AuthContext';
-import GetAllStore from '../../endpoints/GetAllStore';
+import GetStoreQuery from '../../endpoints/GetStoreQuery';
 import { Link, useHistory } from 'react-router-dom';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import CreateStoreForm from './CreateStoreForm';
 import StoreCard from './StoreCard';
 
 const StoreHome = () => {
+	const { state } = useContext(AuthContext);
+
 	const [stores, setStores] = useState([]);
 	useEffect(() => {
-		GetAllStore().then((data) => {
+		GetStoreQuery('username', state.user.username).then((data) => {
 			setStores(data);
 		});
 		// return () => {

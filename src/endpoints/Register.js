@@ -11,8 +11,10 @@ const Register = async (username, password, userType) => {
 			}
 		);
 		console.log(data);
+		const jsonData = JSON.stringify(data.user);
 		localStorage.setItem('access', data.accessToken);
 		localStorage.setItem('refresh', data.refreshToken);
+		localStorage.setItem('user', jsonData);
 		return data;
 	} catch (err) {
 		console.log(err);

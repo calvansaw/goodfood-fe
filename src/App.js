@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import LoginForm from './components/Login/LoginForm';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
@@ -9,7 +9,14 @@ import PublicHome from './components/Home/PublicHome';
 
 const App = () => {
 	const { state } = useContext(AuthContext);
-	const isOwner = state.user?.userType === 'owner';
+
+	const { isAuth, isOwner } = useMemo(
+		() => ({
+			isAuth: state.isAuth,
+			isOwner: state.user?.userType === 'owner',
+		}),
+		[state]
+	);
 
 	return (
 		<div className="App">
@@ -17,10 +24,10 @@ const App = () => {
 			<div className="content">
 				<Switch>
 					<Route path="/signin">
-						{state.isAuth ? <Redirect to="/" /> : <LoginForm />}
+						{isAuth ? <Redirect to="/" /> : <LoginForm />}
 					</Route>
 					<Route path="/register">
-						{state.isAuth ? <Redirect to="/" /> : <RegisterForm />}
+						{isAuth ? <Redirect to="/" /> : <RegisterForm />}
 					</Route>
 					<Route path="/store">
 						{isOwner ? <StoreHome /> : <Redirect to="/" />}

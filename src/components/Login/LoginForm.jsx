@@ -31,7 +31,6 @@ const LoginForm = () => {
 					type: 'LOGIN',
 					data,
 				});
-			history.push('/');
 		},
 	});
 	console.log(state);

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import {
 	AppBar,
 	Toolbar,
@@ -14,15 +14,28 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import useStyles from './Navbar.styles';
 import SignOut from '../../endpoints/SignOut';
+import { useHistory } from 'react-router-dom';
 
 const Navbar = () => {
+	let history = useHistory();
 	const { state, dispatch } = useContext(AuthContext);
+	const { isAuth, isOwner } = useMemo(
+		() => ({
+			isAuth: state.isAuth,
+			isOwner: state.user?.userType === 'owner',
+		}),
+		[state]
+	);
 	const classes = useStyles();
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const open = Boolean(anchorEl);
 
 	const handleMenu = (event) => {
 		setAnchorEl(event.currentTarget);
+	};
+
+	const handleClick = () => {
+		isOwner && history.push('/store');
 	};
 
 	const handleClose = () => {
@@ -63,15 +76,17 @@ const Navbar = () => {
 					)}
 					{state.isAuth && (
 						<div>
-							<IconButton
-								aria-label="account of current user"
-								aria-controls="menu-appbar"
-								aria-haspopup="true"
-								onClick={handleMenu}
-								color="inherit"
-							>
-								<AccountCircle />
-							</IconButton>
+							<a href="/store">
+								<IconButton
+									aria-label="account of current user"
+									aria-controls="menu-appbar"
+									aria-haspopup="true"
+									// onClick={handleClick}
+									color="inherit"
+								>
+									<AccountCircle />
+								</IconButton>
+							</a>
 							<Menu
 								id="menu-appbar"
 								anchorEl={anchorEl}

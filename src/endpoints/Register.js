@@ -1,6 +1,6 @@
 import Axios from '../utils/Axios';
 
-const register = async (username, password, userType) => {
+const Register = async (username, password, userType) => {
 	try {
 		const { data } = await Axios.post(
 			`${process.env.REACT_APP_BACKEND_URL}/auth/signup`,
@@ -19,4 +19,4 @@ const register = async (username, password, userType) => {
 	}
 };
 
-export default register;
+export default Register;

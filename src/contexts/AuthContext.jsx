@@ -6,9 +6,14 @@ export const AuthContext = createContext();
 
 //to wrap provider components
 const AuthContextProvider = ({ children }) => {
+	const token = localStorage.getItem('access');
+	const userJSON = localStorage.getItem('user');
+	const userObj = JSON.parse(userJSON);
+	console.log(!!token);
+	console.log(userObj);
 	const initialState = {
-		isAuth: false,
-		user: null,
+		isAuth: !!token,
+		user: userObj,
 	};
 	const [state, dispatch] = useReducer(AuthReducer, initialState);
 

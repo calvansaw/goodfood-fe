@@ -1,32 +1,36 @@
-import React from 'react';
-import LoginForm from './components/LoginForm/LoginForm';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import React, { useContext } from 'react';
+import LoginForm from './components/Login/LoginForm';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import RegisterForm from './components/Register/RegisterForm';
-import AuthContextProvider from './contexts/AuthContext';
-import ThemeContextProvider from './contexts/ThemeContext';
+import { AuthContext } from './contexts/AuthContext';
+import StoreHome from './components/Store/StoreHome';
+import PublicHome from './components/Home/PublicHome';
 
 const App = () => {
+	const { state } = useContext(AuthContext);
+	const isOwner = state.user?.userType === 'owner';
+
 	return (
-		<AuthContextProvider>
-			<ThemeContextProvider>
-				<Router>
-					<div className="App">
-						<Navbar />
-						<div className="content">
-							<Switch>
-								<Route path="/signin">
-									<LoginForm />
-								</Route>
-								<Route path="/register">
-									<RegisterForm />
-								</Route>
-							</Switch>
-						</div>
-					</div>
-				</Router>
-			</ThemeContextProvider>
-		</AuthContextProvider>
+		<div className="App">
+			<Navbar />
+			<div className="content">
+				<Switch>
+					<Route path="/signin">
+						{state.isAuth ? <Redirect to="/" /> : <LoginForm />}
+					</Route>
+					<Route path="/register">
+						{state.isAuth ? <Redirect to="/" /> : <RegisterForm />}
+					</Route>
+					<Route path="/store">
+						{isOwner ? <StoreHome /> : <Redirect to="/" />}
+					</Route>
+					<Route exact path="/">
+						<PublicHome />
+					</Route>
+				</Switch>
+			</div>
+		</div>
 	);
 };
 

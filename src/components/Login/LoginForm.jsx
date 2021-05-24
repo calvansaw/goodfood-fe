@@ -12,10 +12,10 @@ import useStyles from './LoginForm.styles';
 import { useFormik } from 'formik';
 import { AuthContext } from '../../contexts/AuthContext';
 import SignIn from '../../endpoints/SignIn';
-import { useHistory } from 'react-router-dom';
+// import { useHistory} from 'react-router-dom';
 
 const LoginForm = () => {
-	let history = useHistory();
+	// let history = useHistory();
 	const { state, dispatch } = useContext(AuthContext);
 	const { values, handleChange, handleSubmit, isSubmitting } = useFormik({
 		initialValues: {

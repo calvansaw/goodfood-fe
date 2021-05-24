@@ -6,14 +6,21 @@ import reportWebVitals from './reportWebVitals';
 import AuthContextProvider from './contexts/AuthContext';
 import ThemeContextProvider from './contexts/ThemeContext';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
+
+const queryClient = new QueryClient();
 
 ReactDOM.render(
 	<React.StrictMode>
 		<AuthContextProvider>
 			<ThemeContextProvider>
-				<Router>
-					<App />
-				</Router>
+				<QueryClientProvider client={queryClient}>
+					<Router>
+						<App />
+						<ReactQueryDevtools initialIsOpen={false} />
+					</Router>
+				</QueryClientProvider>
 			</ThemeContextProvider>
 		</AuthContextProvider>
 	</React.StrictMode>,

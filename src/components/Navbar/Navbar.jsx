@@ -11,13 +11,12 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import { AccountCircle } from '@material-ui/icons';
 import { AuthContext } from '../../contexts/AuthContext';
-import { Link } from 'react-router-dom';
 import useStyles from './Navbar.styles';
 import SignOut from '../../endpoints/SignOut';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 
 const Navbar = () => {
-	let history = useHistory();
+	// let history = useHistory();
 	const { state, dispatch } = useContext(AuthContext);
 	const { isAuth, isOwner } = useMemo(
 		() => ({
@@ -30,13 +29,9 @@ const Navbar = () => {
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const open = Boolean(anchorEl);
 
-	const handleMenu = (event) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const handleClick = () => {
-		isOwner && history.push('/store');
-	};
+	// const handleMenu = (event) => {
+	// 	setAnchorEl(event.currentTarget);
+	// };
 
 	const handleClose = () => {
 		setAnchorEl(null);
@@ -76,17 +71,16 @@ const Navbar = () => {
 					)}
 					{state.isAuth && (
 						<div>
-							<a href="/store">
+							<Link to="/store">
 								<IconButton
 									aria-label="account of current user"
 									aria-controls="menu-appbar"
 									aria-haspopup="true"
-									// onClick={handleClick}
 									color="inherit"
 								>
 									<AccountCircle />
 								</IconButton>
-							</a>
+							</Link>
 							<Menu
 								id="menu-appbar"
 								anchorEl={anchorEl}

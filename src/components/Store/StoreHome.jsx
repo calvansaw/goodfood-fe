@@ -17,28 +17,23 @@ import { Link, useHistory } from 'react-router-dom';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import CreateStoreForm from './CreateStoreForm';
 import StoreCard from './StoreCard';
+import { useQuery } from 'react-query';
+import { STORES } from '../../constants/queryKeys';
 
 const StoreHome = () => {
 	const { state } = useContext(AuthContext);
+	const { isLoading, isError, data, error } = useQuery(STORES, () =>
+		GetStoreQuery('username', state.user.username).then((stores) =>
+			stores.map((store, index) => (
+				<Grid key={index} item xs={12}>
+					<StoreCard store={store} />
+				</Grid>
+			))
+		)
+	);
 
-	const [stores, setStores] = useState([]);
-	useEffect(() => {
-		GetStoreQuery('username', state.user.username).then((data) => {
-			setStores(data);
-		});
-		// return () => {
-		// 	cleanup
-		// }
-	}, []);
-
-	const storeList = stores.map((store, index) => {
-		console.log(store);
-		return (
-			<Grid key={index} item xs={12}>
-				<StoreCard store={store} />
-			</Grid>
-		);
-	});
+	isLoading && console.log('Loading...');
+	isError && console.log('There is an error:', error);
 
 	return (
 		<>
@@ -57,12 +52,22 @@ const StoreHome = () => {
 						</Link>
 					</Grid>
 				</Grid>
-				<Grid xs={5}>{storeList}</Grid>
 			</Grid>
 
 			<Switch>
+				<Route exact path="/store">
+					<Grid container alignItems="center" direction="column">
+						<Grid item xs={6}>
+							{data}
+						</Grid>
+					</Grid>
+				</Route>
 				<Route path="/store/create">
-					<CreateStoreForm />
+					<Grid container alignItems="center" direction="column">
+						<Grid item xs={5}>
+							<CreateStoreForm />
+						</Grid>
+					</Grid>
 				</Route>
 			</Switch>
 		</>

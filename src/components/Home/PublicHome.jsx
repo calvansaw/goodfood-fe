@@ -16,26 +16,21 @@ import GetAllStore from '../../endpoints/GetAllStore';
 import { Link, useHistory } from 'react-router-dom';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import StoreCard from '../../components/Store/StoreCard';
+import { useQuery } from 'react-query';
+import { STORES } from '../../constants/queryKeys';
 
 const PublicHome = () => {
-	const [stores, setStores] = useState([]);
-	useEffect(() => {
-		GetAllStore().then((data) => {
-			setStores(data);
-		});
-		// return () => {
-		// 	cleanup
-		// }
-	}, []);
-
-	const storeList = stores.map((store, index) => {
-		console.log(store);
-		return (
-			<Grid key={index} item xs={12}>
-				<StoreCard store={store} />
-			</Grid>
-		);
-	});
+	const { isLoading, isError, data, error } = useQuery(STORES, () =>
+		GetAllStore().then((stores) =>
+			stores.map((store, index) => (
+				<Grid key={index} item xs={12}>
+					<StoreCard store={store} />
+				</Grid>
+			))
+		)
+	);
+	isLoading && console.log('Loading...');
+	isError && console.log('There is an error:', error);
 
 	return (
 		<>
@@ -45,7 +40,7 @@ const PublicHome = () => {
 						All the GoodFoods in SG!
 					</Typography>
 				</Grid>
-				<Grid xs={5}>{storeList}</Grid>
+				<Grid xs={5}>{data}</Grid>
 			</Grid>
 		</>
 	);

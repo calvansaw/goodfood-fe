@@ -16,7 +16,7 @@ const SignIn = async (username, password) => {
 		localStorage.setItem('user', jsonData);
 		return data;
 	} catch (err) {
-		console.log(err);
+		throw new Error('Login failed!');
 	}
 };
 

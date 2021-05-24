@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import clsx from 'clsx';
 import {
 	IconButton,
@@ -12,29 +12,49 @@ import useStyles from './LoginForm.styles';
 import { useFormik } from 'formik';
 import { AuthContext } from '../../contexts/AuthContext';
 import SignIn from '../../endpoints/SignIn';
+import { useMutation } from 'react-query';
+import { useSnackbar } from 'notistack';
 // import { useHistory} from 'react-router-dom';
 
 const LoginForm = () => {
 	// let history = useHistory();
 	const { state, dispatch } = useContext(AuthContext);
-	const { values, handleChange, handleSubmit, isSubmitting } = useFormik({
-		initialValues: {
-			username: '',
-			password: '',
-		},
-		onSubmit: async (values) => {
-			console.log(values);
-			const data = await SignIn(values.username, values.password);
-			console.log(data);
-			data &&
+	const { enqueueSnackbar } = useSnackbar();
+	const { mutate } = useMutation(
+		(user) => SignIn(user.username, user.password),
+		{
+			onError: () => {
+				enqueueSnackbar('Something went wrong, please try again!', {
+					variant: 'error',
+				});
+			},
+			onSuccess: (data) => {
+				console.log(data);
 				dispatch({
 					type: 'LOGIN',
 					data,
 				});
+				enqueueSnackbar('Login successful!', {
+					variant: 'success',
+				});
+			},
+		}
+	);
+
+	const submit = useCallback((values) => {
+		mutate(values);
+	}, []);
+
+	const { values, handleChange, handleSubmit } = useFormik({
+		initialValues: {
+			username: '',
+			password: '',
 		},
+		onSubmit: submit,
 	});
+
 	console.log(state);
-	console.log('is submitting form:', isSubmitting);
+
 	const classes = useStyles();
 	const [showPassword, setShowPassword] = useState(false);
 

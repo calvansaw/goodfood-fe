@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import clsx from 'clsx';
 import {
 	IconButton,
@@ -15,29 +15,44 @@ import useStyles from './RegisterForm.styles';
 import { useFormik } from 'formik';
 import Register from '../../endpoints/Register';
 import { AuthContext } from '../../contexts/AuthContext';
+import { useMutation } from 'react-query';
+import { useSnackbar } from 'notistack';
 
 const RegisterForm = () => {
 	const { state, dispatch } = useContext(AuthContext);
+	const { enqueueSnackbar } = useSnackbar();
+	const { mutate } = useMutation(
+		(user) => Register(user.username, user.password, user.userType),
+		{
+			onError: () => {
+				enqueueSnackbar('Something went wrong, please try again!', {
+					variant: 'error',
+				});
+			},
+			onSuccess: (data) => {
+				console.log(data);
+				dispatch({
+					type: 'REGISTER',
+					data,
+				});
+				enqueueSnackbar('User registered!', {
+					variant: 'success',
+				});
+			},
+		}
+	);
+
+	const submit = useCallback((values) => {
+		mutate(values);
+	}, []);
+
 	const { values, handleChange, handleSubmit } = useFormik({
 		initialValues: {
 			username: '',
 			password: '',
 			userType: '',
 		},
-		onSubmit: async (values) => {
-			console.log(values);
-			const data = await Register(
-				values.username,
-				values.password,
-				values.userType
-			);
-			console.log(data);
-			data &&
-				dispatch({
-					type: 'REGISTER',
-					data,
-				});
-		},
+		onSubmit: submit,
 	});
 
 	const classes = useStyles();

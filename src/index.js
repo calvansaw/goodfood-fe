@@ -8,6 +8,7 @@ import ThemeContextProvider from './contexts/ThemeContext';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { SnackbarProvider } from 'notistack';
 
 const queryClient = new QueryClient();
 
@@ -15,12 +16,14 @@ ReactDOM.render(
 	<React.StrictMode>
 		<AuthContextProvider>
 			<ThemeContextProvider>
-				<QueryClientProvider client={queryClient}>
-					<Router>
-						<App />
-						<ReactQueryDevtools initialIsOpen={false} />
-					</Router>
-				</QueryClientProvider>
+				<SnackbarProvider maxSnack={3}>
+					<QueryClientProvider client={queryClient}>
+						<Router>
+							<App />
+							<ReactQueryDevtools initialIsOpen={false} />
+						</Router>
+					</QueryClientProvider>
+				</SnackbarProvider>
 			</ThemeContextProvider>
 		</AuthContextProvider>
 	</React.StrictMode>,

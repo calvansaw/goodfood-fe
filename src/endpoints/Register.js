@@ -17,7 +17,7 @@ const Register = async (username, password, userType) => {
 		localStorage.setItem('user', jsonData);
 		return data;
 	} catch (err) {
-		console.log(err);
+		throw new Error('Register failed!');
 	}
 };
 

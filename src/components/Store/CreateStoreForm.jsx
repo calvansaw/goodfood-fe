@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useCallback } from 'react';
 import clsx from 'clsx';
 import {
 	Grid,
@@ -13,32 +13,68 @@ import { Formik, useFormik } from 'formik';
 import { AuthContext } from '../../contexts/AuthContext';
 import CreateStore from '../../endpoints/CreateStore';
 import { useHistory } from 'react-router-dom';
+import { useMutation, useQueryClient } from 'react-query';
+import { useSnackbar } from 'notistack';
+import { STORES } from '../../constants/queryKeys';
 
 const CreateStoreForm = () => {
 	let history = useHistory();
 	const { state, dispatch } = useContext(AuthContext);
-	const { values, handleChange, handleSubmit, isSubmitting } = useFormik({
+	const { enqueueSnackbar } = useSnackbar();
+	const queryClient = useQueryClient();
+	const { mutate } = useMutation(
+		(values) => {
+			let payload = {
+				storeName: values.storeName,
+				storeDesc: values.storeDesc,
+				storeImg: values.storeImg,
+				username: state.user.username,
+			};
+			CreateStore(payload);
+		},
+		{
+			onError: () => {
+				enqueueSnackbar('Something went wrong, please try again!', {
+					variant: 'error',
+				});
+			},
+			onSuccess: () => {
+				enqueueSnackbar('Create store successful!', {
+					variant: 'success',
+				});
+				history.push('/store');
+				queryClient.invalidateQueries(STORES);
+			},
+		}
+	);
+
+	const submit = useCallback((values) => {
+		mutate(values);
+	}, []);
+
+	const { values, handleChange, handleSubmit } = useFormik({
 		initialValues: {
 			storeName: '',
 			storeDesc: '',
 			storeImg: '',
 		},
-		onSubmit: async (values) => {
-			console.log(values);
-			const data = await CreateStore(
-				values.storeName,
-				values.storeDesc,
-				values.storeImg,
-				state.user.username
-			);
-			console.log(data);
-			// data &&
-			// 	dispatch({
-			// 		type: 'XXX',
-			// 		data,
-			// 	});
-			history.push('/store');
-		},
+		onSubmit: submit,
+		// async (values) => {
+		// console.log(values);
+		// const data = await CreateStore(
+		// 	values.storeName,
+		// 	values.storeDesc,
+		// 	values.storeImg,
+		// 	state.user.username
+		// );
+		// console.log(data);
+		// // data &&
+		// // 	dispatch({
+		// // 		type: 'XXX',
+		// // 		data,
+		// // 	});
+		// history.push('/store');
+		// },
 	});
 	const classes = useStyles();
 

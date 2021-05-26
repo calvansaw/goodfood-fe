@@ -7,6 +7,7 @@ import {
 	InputLabel,
 	InputAdornment,
 	Button,
+	TextField,
 } from '@material-ui/core';
 import useStyles from './CreateStoreForm.styles';
 import { Formik, useFormik } from 'formik';
@@ -16,6 +17,7 @@ import { useHistory } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSnackbar } from 'notistack';
 import { STORES } from '../../constants/queryKeys';
+import * as yup from 'yup';
 
 const CreateStoreForm = () => {
 	let history = useHistory();
@@ -52,30 +54,22 @@ const CreateStoreForm = () => {
 		mutate(values);
 	}, []);
 
-	const { values, handleChange, handleSubmit } = useFormik({
-		initialValues: {
-			storeName: '',
-			storeDesc: '',
-			storeImg: '',
-		},
-		onSubmit: submit,
-		// async (values) => {
-		// console.log(values);
-		// const data = await CreateStore(
-		// 	values.storeName,
-		// 	values.storeDesc,
-		// 	values.storeImg,
-		// 	state.user.username
-		// );
-		// console.log(data);
-		// // data &&
-		// // 	dispatch({
-		// // 		type: 'XXX',
-		// // 		data,
-		// // 	});
-		// history.push('/store');
-		// },
+	const validationSchema = yup.object({
+		storeName: yup.string().required('Store name is required'),
+		storeDesc: yup.string().required('Store description is required'),
+		storeImg: yup.string().required('An image url is required'),
 	});
+
+	const { values, handleChange, handleBlur, handleSubmit, touched, errors } =
+		useFormik({
+			initialValues: {
+				storeName: '',
+				storeDesc: '',
+				storeImg: '',
+			},
+			validationSchema,
+			onSubmit: submit,
+		});
 	const classes = useStyles();
 
 	return (
@@ -83,37 +77,46 @@ const CreateStoreForm = () => {
 			<Grid container className={classes.margin}>
 				<Grid item xs={12}>
 					<InputLabel htmlFor="storeName">Store Name</InputLabel>
-					<Input
+					<TextField
 						className={clsx(classes.margin, classes.textField)}
 						id="storeName"
 						name="storeName"
 						type="text"
 						value={values.storeName}
 						onChange={handleChange}
+						onBlur={handleBlur}
+						error={touched.storeName && Boolean(errors.storeName)}
+						helperText={touched.storeName && errors.storeName}
 					/>
 				</Grid>
 				<Grid item xs={12}>
 					<InputLabel htmlFor="storeDesc">
 						Store Description
 					</InputLabel>
-					<Input
+					<TextField
 						className={clsx(classes.margin, classes.textField)}
 						id="storeDesc"
 						name="storeDesc"
 						type="text"
 						value={values.storeDesc}
 						onChange={handleChange}
+						onBlur={handleBlur}
+						error={touched.storeDesc && Boolean(errors.storeDesc)}
+						helperText={touched.storeDesc && errors.storeDesc}
 					/>
 				</Grid>
 				<Grid item xs={12}>
 					<InputLabel htmlFor="storeImg">Store Image</InputLabel>
-					<Input
+					<TextField
 						className={clsx(classes.margin, classes.textField)}
 						id="storeImg"
 						name="storeImg"
 						type="text"
 						value={values.storeImg}
 						onChange={handleChange}
+						onBlur={handleBlur}
+						error={touched.storeImg && Boolean(errors.storeImg)}
+						helperText={touched.storeImg && errors.storeImg}
 					/>
 				</Grid>
 			</Grid>

@@ -6,17 +6,30 @@ import RegisterForm from './components/Register/RegisterForm';
 import { AuthContext } from './contexts/AuthContext';
 import StoreHome from './components/Store/StoreHome';
 import PublicHome from './components/Home/PublicHome';
+import MenuHome from './components/Store/MenuHome';
+import { useQuery } from 'react-query';
+import { STORES } from './constants/queryKeys';
+import GetAllStore from './endpoints/GetAllStore';
+import { Grid } from '@material-ui/core';
+import StoreCard from './components/Store/StoreCard';
 
 const App = () => {
 	const { state } = useContext(AuthContext);
+	const { isLoading, isError, data, error } = useQuery(STORES, () =>
+		GetAllStore()
+	);
+	isLoading && console.log('Loading...');
+	isError && console.log('There is an error:', error);
 
 	const { isAuth, isOwner } = useMemo(
 		() => ({
 			isAuth: state.isAuth,
-			isOwner: state.user?.userType === 'owner',
+			isOwner: Boolean(state.user),
 		}),
 		[state]
 	);
+
+	console.log(isOwner);
 
 	return (
 		<div className="App">
@@ -29,11 +42,18 @@ const App = () => {
 					<Route path="/register">
 						{isAuth ? <Redirect to="/" /> : <RegisterForm />}
 					</Route>
+					<Route path="/store/menu/:id">
+						<MenuHome data={data} />
+					</Route>
 					<Route path="/store">
-						{isOwner ? <StoreHome /> : <Redirect to="/" />}
+						{isOwner ? (
+							<StoreHome data={data} />
+						) : (
+							<Redirect to="/" />
+						)}
 					</Route>
 					<Route exact path="/">
-						<PublicHome />
+						{data && <PublicHome data={data} />}
 					</Route>
 				</Switch>
 			</div>

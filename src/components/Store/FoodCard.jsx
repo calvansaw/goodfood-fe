@@ -71,8 +71,8 @@ const FoodCard = ({ food }) => {
 				</IconButton>
 			</CardActions>
 			<Collapse in={expanded} timeout="auto" unmountOnExit>
-				{comments.map((comment) => (
-					<CardContent>
+				{comments.map((comment, index) => (
+					<CardContent key={index}>
 						<Typography
 							variant="body2"
 							color="textSecondary"

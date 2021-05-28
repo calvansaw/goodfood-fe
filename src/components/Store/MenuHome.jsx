@@ -54,7 +54,7 @@ const MenuHome = ({ data }) => {
 					</Button>
 
 					<Grid item>
-						<Link to="#">
+						<Link to={`/food/create/${id}`}>
 							<Button> Create Food</Button>
 						</Link>
 					</Grid>

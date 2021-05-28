@@ -8,8 +8,10 @@ export const AuthReducer = (state, action) => {
 		case 'LOGOUT':
 			return { ...state, isAuth: false, user: null };
 
-		case 'REGISTER':
-			return { ...state, isAuth: true, user: action.data };
+		case 'REGISTER': {
+			console.log(action.data);
+			return { ...state, isAuth: true, user: action.data.user };
+		}
 
 		default:
 			return state;

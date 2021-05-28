@@ -12,6 +12,8 @@ import { STORES } from './constants/queryKeys';
 import GetAllStore from './endpoints/GetAllStore';
 import { Grid } from '@material-ui/core';
 import StoreCard from './components/Store/StoreCard';
+import CreateStoreForm from './components/Store/CreateStoreForm';
+import CreateFoodForm from './components/Store/CreateFoodForm';
 
 const App = () => {
 	const { state } = useContext(AuthContext);
@@ -45,7 +47,10 @@ const App = () => {
 					<Route path="/register">
 						{isAuth ? <Redirect to="/" /> : <RegisterForm />}
 					</Route>
-					<Route path="/store/menu/:id">
+					<Route exact path="/store/create">
+						<CreateStoreForm />
+					</Route>
+					<Route exact path="/store/menu/:id">
 						{data && <MenuHome data={data} />}
 					</Route>
 					<Route exact path="/store">
@@ -54,6 +59,9 @@ const App = () => {
 						) : (
 							<Redirect to="/" />
 						)}
+					</Route>
+					<Route exact path="/food/create/:id">
+						<CreateFoodForm />
 					</Route>
 					<Route exact path="/">
 						{data && <PublicHome data={data} />}

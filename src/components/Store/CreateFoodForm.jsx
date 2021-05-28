@@ -9,30 +9,34 @@ import {
 	Button,
 	TextField,
 } from '@material-ui/core';
-import useStyles from './CreateStoreForm.styles';
+import useStyles from './CreateFoodForm.styles';
 import { Formik, useFormik } from 'formik';
 import { AuthContext } from '../../contexts/AuthContext';
-import CreateStore from '../../endpoints/CreateStore';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSnackbar } from 'notistack';
 import { STORES } from '../../constants/queryKeys';
 import * as yup from 'yup';
+import CreateFood from '../../endpoints/CreateFood';
 
-const CreateStoreForm = () => {
+const CreateFoodForm = () => {
 	let history = useHistory();
+	const { id } = useParams();
 	const { state, dispatch } = useContext(AuthContext);
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
 	const { mutate } = useMutation(
 		(values) => {
 			let payload = {
-				storeName: values.storeName,
-				storeDesc: values.storeDesc,
-				storeImg: values.storeImg,
+				foodName: values.foodName,
+				foodDesc: values.foodDesc,
+				foodImg: values.foodImg,
+				price: values.price,
 				username: state.user.username,
 			};
-			return CreateStore(payload);
+			console.log(payload);
+			console.log(id);
+			return CreateFood(id, payload);
 		},
 		{
 			onError: () => {
@@ -41,7 +45,7 @@ const CreateStoreForm = () => {
 				});
 			},
 			onSuccess: () => {
-				enqueueSnackbar('Create store successful!', {
+				enqueueSnackbar('Create food successful!', {
 					variant: 'success',
 				});
 				queryClient.invalidateQueries(STORES);
@@ -51,21 +55,24 @@ const CreateStoreForm = () => {
 	);
 
 	const submit = useCallback((values) => {
+		console.log(values);
 		mutate(values);
 	}, []);
 
 	const validationSchema = yup.object({
-		storeName: yup.string().required('Store name is required'),
-		storeDesc: yup.string().required('Store description is required'),
-		storeImg: yup.string().required('An image url is required'),
+		foodName: yup.string().required('Food name is required'),
+		foodDesc: yup.string().required('Food description is required'),
+		foodImg: yup.string().required('An image url is required'),
+		price: yup.number().required('Price is required'),
 	});
 
 	const { values, handleChange, handleBlur, handleSubmit, touched, errors } =
 		useFormik({
 			initialValues: {
-				storeName: '',
-				storeDesc: '',
-				storeImg: '',
+				foodName: '',
+				foodDesc: '',
+				foodImg: '',
+				price: 0,
 			},
 			validationSchema,
 			onSubmit: submit,
@@ -76,47 +83,59 @@ const CreateStoreForm = () => {
 		<form onSubmit={handleSubmit}>
 			<Grid container className={classes.margin}>
 				<Grid item xs={12}>
-					<InputLabel htmlFor="storeName">Store Name</InputLabel>
+					<InputLabel htmlFor="foodName">Food Name</InputLabel>
 					<TextField
 						className={clsx(classes.margin, classes.textField)}
-						id="storeName"
-						name="storeName"
+						id="foodName"
+						name="foodName"
 						type="text"
-						value={values.storeName}
+						value={values.foodName}
 						onChange={handleChange}
 						onBlur={handleBlur}
-						error={touched.storeName && Boolean(errors.storeName)}
-						helperText={touched.storeName && errors.storeName}
+						error={touched.foodName && Boolean(errors.foodName)}
+						helperText={touched.foodName && errors.foodName}
 					/>
 				</Grid>
 				<Grid item xs={12}>
-					<InputLabel htmlFor="storeDesc">
-						Store Description
-					</InputLabel>
+					<InputLabel htmlFor="foodDesc">Food Description</InputLabel>
 					<TextField
 						className={clsx(classes.margin, classes.textField)}
-						id="storeDesc"
-						name="storeDesc"
+						id="foodDesc"
+						name="foodDesc"
 						type="text"
-						value={values.storeDesc}
+						value={values.foodDesc}
 						onChange={handleChange}
 						onBlur={handleBlur}
-						error={touched.storeDesc && Boolean(errors.storeDesc)}
-						helperText={touched.storeDesc && errors.storeDesc}
+						error={touched.foodDesc && Boolean(errors.foodDesc)}
+						helperText={touched.foodDesc && errors.foodDesc}
 					/>
 				</Grid>
 				<Grid item xs={12}>
-					<InputLabel htmlFor="storeImg">Store Image</InputLabel>
+					<InputLabel htmlFor="foodImg">Food Image</InputLabel>
 					<TextField
 						className={clsx(classes.margin, classes.textField)}
-						id="storeImg"
-						name="storeImg"
+						id="foodImg"
+						name="foodImg"
 						type="text"
-						value={values.storeImg}
+						value={values.foodImg}
 						onChange={handleChange}
 						onBlur={handleBlur}
-						error={touched.storeImg && Boolean(errors.storeImg)}
-						helperText={touched.storeImg && errors.storeImg}
+						error={touched.foodImg && Boolean(errors.foodImg)}
+						helperText={touched.foodImg && errors.foodImg}
+					/>
+				</Grid>
+				<Grid item xs={12}>
+					<InputLabel htmlFor="price">Price</InputLabel>
+					<TextField
+						className={clsx(classes.margin, classes.textField)}
+						id="price"
+						name="price"
+						type="number"
+						value={values.price}
+						onChange={handleChange}
+						onBlur={handleBlur}
+						error={touched.price && Boolean(errors.price)}
+						helperText={touched.price && errors.price}
 					/>
 				</Grid>
 			</Grid>
@@ -125,4 +144,4 @@ const CreateStoreForm = () => {
 	);
 };
 
-export default CreateStoreForm;
+export default CreateFoodForm;

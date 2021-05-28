@@ -6,7 +6,7 @@ const PublicHome = ({ data }) => {
 	return (
 		<>
 			<Grid container alignItems="center" direction="column" wrap>
-				<Grid items xs={12}>
+				<Grid item xs={12}>
 					<Typography color="textPrimary" variant="h5">
 						All the GoodFoods in SG!
 					</Typography>

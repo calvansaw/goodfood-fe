@@ -37,9 +37,8 @@ const StoreHome = ({ data }) => {
 	// isError && console.log('There is an error:', error);
 
 	const stores = useMemo(
-		() =>
-			data.filter((store) => store.username === state.user.user.username),
-		[data, state.user.user.username]
+		() => data.filter((store) => store.username === state.user.username),
+		[data, state.user.username]
 	);
 
 	console.log(data);
@@ -47,7 +46,7 @@ const StoreHome = ({ data }) => {
 		<Switch>
 			<Route exact path="/store">
 				<Grid container alignItems="center" direction="column" wrap>
-					<Grid items xs={12}>
+					<Grid item xs={12}>
 						<Link to="/store">
 							<Button size="large">
 								<Typography color="textPrimary" variant="h5">

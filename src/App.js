@@ -24,12 +24,15 @@ const App = () => {
 	const { isAuth, isOwner } = useMemo(
 		() => ({
 			isAuth: state.isAuth,
-			isOwner: Boolean(state.user),
+			isOwner: Boolean(state.user?.userType === 'owner'),
 		}),
 		[state]
 	);
 
+	console.log(state);
+	console.log(isAuth);
 	console.log(isOwner);
+	console.log(data);
 
 	return (
 		<div className="App">
@@ -43,10 +46,10 @@ const App = () => {
 						{isAuth ? <Redirect to="/" /> : <RegisterForm />}
 					</Route>
 					<Route path="/store/menu/:id">
-						<MenuHome data={data} />
+						{data && <MenuHome data={data} />}
 					</Route>
-					<Route path="/store">
-						{isOwner ? (
+					<Route exact path="/store">
+						{isOwner && data ? (
 							<StoreHome data={data} />
 						) : (
 							<Redirect to="/" />

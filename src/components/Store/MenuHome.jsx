@@ -46,7 +46,7 @@ const MenuHome = ({ data }) => {
 	return (
 		<>
 			<Grid container alignItems="center" direction="column" wrap>
-				<Grid items xs={12}>
+				<Grid item xs={12}>
 					<Button size="large">
 						<Typography color="textPrimary" variant="h5">
 							Menu of store id: {id}

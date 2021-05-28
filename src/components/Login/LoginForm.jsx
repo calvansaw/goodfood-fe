@@ -41,9 +41,12 @@ const LoginForm = () => {
 		}
 	);
 
-	const submit = useCallback((values) => {
-		mutate(values);
-	}, []);
+	const submit = useCallback(
+		(values) => {
+			mutate(values);
+		},
+		[mutate]
+	);
 
 	const { values, handleChange, handleSubmit } = useFormik({
 		initialValues: {

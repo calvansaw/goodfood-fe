@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -13,13 +13,30 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import useStyles from './FoodCard.styles';
+import CreateCommentForm from './CreateCommentForm';
+import moment from 'moment';
+import CommentCard from './CommentCard';
 
-const FoodCard = ({ food }) => {
+const FoodCard = ({ food, storeId }) => {
 	console.log(food);
-	const { foodName, foodDesc, foodImg, price, comments } = food;
+	const { foodName, foodDesc, foodImg, price, comments, _id } = food;
 	const classes = useStyles();
-	const [expanded, setExpanded] = React.useState(false);
+	const [expanded, setExpanded] = useState(false);
+
+	const [anchorEl, setAnchorEl] = React.useState(null);
+
+	const handleClick = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
 
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
@@ -72,20 +89,19 @@ const FoodCard = ({ food }) => {
 			</CardActions>
 			<Collapse in={expanded} timeout="auto" unmountOnExit>
 				{comments.map((comment, index) => (
-					<CardContent key={index}>
-						<Typography
-							variant="body2"
-							color="textSecondary"
-							component="p"
-						>
-							Comments by {comment.name}:
-						</Typography>
-						<Typography paragraph>{comment.comment}</Typography>
-
-						<Typography>End.</Typography>
-					</CardContent>
+					<CommentCard
+						key={index}
+						comment={comment}
+						foodId={_id}
+						storeId={storeId}
+						index={index}
+					/>
 				))}
 			</Collapse>
+
+			<Grid container xs={12}>
+				<CreateCommentForm foodId={_id} storeId={storeId} />
+			</Grid>
 		</Card>
 	);
 };

@@ -49,7 +49,7 @@ const CreateFoodForm = () => {
 					variant: 'success',
 				});
 				queryClient.invalidateQueries(STORES);
-				history.push('/store');
+				history.push(`/store/menu/${id}`);
 			},
 		}
 	);
@@ -63,7 +63,10 @@ const CreateFoodForm = () => {
 		foodName: yup.string().required('Food name is required'),
 		foodDesc: yup.string().required('Food description is required'),
 		foodImg: yup.string().required('An image url is required'),
-		price: yup.number().required('Price is required'),
+		price: yup
+			.number()
+			.positive('Price cannot be 0')
+			.required('Price is required'),
 	});
 
 	const { values, handleChange, handleBlur, handleSubmit, touched, errors } =

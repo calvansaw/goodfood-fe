@@ -65,7 +65,7 @@ const MenuHome = ({ data }) => {
 				<Grid item xs={6}>
 					{store.menu.map((food, index) => (
 						<Grid key={index} item xs={12}>
-							<FoodCard food={food} />
+							<FoodCard food={food} storeId={id} />
 						</Grid>
 					))}
 				</Grid>

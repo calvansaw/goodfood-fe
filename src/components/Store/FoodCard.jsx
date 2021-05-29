@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import clsx from 'clsx';
+import { useSnackbar } from 'notistack';
+import { useMutation, useQueryClient } from 'react-query';
+import { STORES } from '../../constants/queryKeys';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -19,28 +22,65 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import useStyles from './FoodCard.styles';
 import CreateCommentForm from './CreateCommentForm';
+import DeleteFood from '../../endpoints/DeleteFood';
 import moment from 'moment';
 import CommentCard from './CommentCard';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import EditIcon from '@material-ui/icons/Edit';
+import DoneOutlineIcon from '@material-ui/icons/DoneOutline';
+import SettingsIcon from '@material-ui/icons/Settings';
+import Divider from '@material-ui/core/Divider';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
+import EditFoodDialogForm from './EditFoodDialogForm';
 
 const FoodCard = ({ food, storeId }) => {
+	const { enqueueSnackbar } = useSnackbar();
+	const queryClient = useQueryClient();
 	console.log(food);
 	const { foodName, foodDesc, foodImg, price, comments, _id } = food;
 	const classes = useStyles();
 	const [expanded, setExpanded] = useState(false);
-
-	const [anchorEl, setAnchorEl] = React.useState(null);
-
-	const handleClick = (event) => {
-		setAnchorEl(event.currentTarget);
+	const [open, setOpen] = useState(false);
+	const handleDialogOpen = () => {
+		setOpen(true);
 	};
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
-
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
 	};
+
+	const handleDialogClose = () => {
+		setOpen(false);
+	};
+	const formRef = useRef(null);
+
+	const params = {
+		food: _id,
+	};
+
+	const { mutate: deleteFood } = useMutation(
+		() => DeleteFood(storeId, params),
+		{
+			onError: () => {
+				enqueueSnackbar('Something went wrong, please try again!', {
+					variant: 'error',
+				});
+			},
+			onSuccess: () => {
+				enqueueSnackbar('Food deleted!', {
+					variant: 'success',
+				});
+				queryClient.invalidateQueries(STORES);
+				// setDrawer(false);
+			},
+		}
+	);
+
+	const handleDelete = useCallback(() => deleteFood(), []);
 
 	console.log(comments);
 	return (
@@ -52,13 +92,36 @@ const FoodCard = ({ food, storeId }) => {
 					</Avatar>
 				}
 				action={
-					<IconButton aria-label="settings">
-						<MoreVertIcon />
-					</IconButton>
+					<>
+						<IconButton onClick={handleDialogOpen}>
+							<SettingsIcon />
+						</IconButton>
+						<IconButton onClick={handleDelete}>
+							<DeleteForeverIcon />
+						</IconButton>
+					</>
 				}
 				title={foodName}
 				subheader={`$ ${price}`}
 			/>
+			<Dialog open={open} onClose={handleDialogClose}>
+				<DialogTitle id="edit-food">Edit Food</DialogTitle>
+				<Divider />
+				<EditFoodDialogForm
+					ref={formRef}
+					storeId={storeId}
+					foodId={_id}
+					closeDialog={handleDialogClose}
+					food={food}
+				/>
+				<Divider />
+				<DialogActions>
+					<Button onClick={handleDialogClose}>Cancel</Button>
+					<IconButton onClick={() => formRef.current?.submitForm()}>
+						<DoneOutlineIcon />
+					</IconButton>
+				</DialogActions>
+			</Dialog>
 			<CardMedia
 				className={classes.media}
 				image={foodImg}
@@ -94,7 +157,7 @@ const FoodCard = ({ food, storeId }) => {
 						comment={comment}
 						foodId={_id}
 						storeId={storeId}
-						index={index}
+						setDrawer={setExpanded}
 					/>
 				))}
 			</Collapse>

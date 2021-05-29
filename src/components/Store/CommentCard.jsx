@@ -26,19 +26,46 @@ import { useSnackbar } from 'notistack';
 import { useMutation, useQueryClient } from 'react-query';
 import { STORES } from '../../constants/queryKeys';
 import EditComment from '../../endpoints/EditComment';
+import DeleteComment from '../../endpoints/DeleteComment';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 
-const CommentCard = ({ comment, foodId, storeId, index }) => {
+const CommentCard = ({ comment, foodId, storeId, setDrawer }) => {
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
 
-	const { mutate } = useMutation(
-		(values) => {
-			let params = {
-				food: foodId,
-				comment: comment._id,
-			};
-			return EditComment(storeId, params, values);
-		},
+	const [expanded, setExpanded] = useState(false);
+	const handleExpandClick = () => {
+		setExpanded(!expanded);
+	};
+
+	const params = {
+		food: foodId,
+		comment: comment._id,
+	};
+
+	const { mutate: deleteComment } = useMutation(
+		() => DeleteComment(storeId, params),
+		{
+			onError: () => {
+				enqueueSnackbar('Something went wrong, please try again!', {
+					variant: 'error',
+				});
+			},
+			onSuccess: () => {
+				enqueueSnackbar('Comment deleted!', {
+					variant: 'success',
+				});
+				queryClient.invalidateQueries(STORES);
+				setDrawer(false);
+			},
+		}
+	);
+
+	const handleDelete = useCallback(() => deleteComment(), []);
+
+	const { mutate: editComment } = useMutation(
+		(values) => EditComment(storeId, params, values),
 		{
 			onError: () => {
 				enqueueSnackbar('Something went wrong, please try again!', {
@@ -50,26 +77,22 @@ const CommentCard = ({ comment, foodId, storeId, index }) => {
 					variant: 'success',
 				});
 				queryClient.invalidateQueries(STORES);
+				setExpanded(!expanded);
 			},
 		}
 	);
 
 	const submit = useCallback((values) => {
 		console.log(values);
-		mutate(values);
+		editComment(values);
 	}, []);
 
-	const { values, handleChange, handleSubmit } = useFormik({
+	const { values, handleChange, handleSubmit, resetForm } = useFormik({
 		initialValues: {
 			comment: comment.comment,
 		},
 		onSubmit: submit,
 	});
-
-	const [expanded, setExpanded] = useState(false);
-	const handleExpandClick = () => {
-		setExpanded(!expanded);
-	};
 
 	return (
 		<CardContent>
@@ -89,10 +112,12 @@ const CommentCard = ({ comment, foodId, storeId, index }) => {
 				</form>
 			</Collapse>
 			<Grid container justify="flex-end" xs={12}>
-				<Button onClick={handleExpandClick} size="small">
-					Edit
-				</Button>
-				<Button size="small">Delete</Button>
+				<IconButton onClick={handleExpandClick} size="small">
+					<EditIcon />
+				</IconButton>
+				<IconButton onClick={handleDelete} size="small">
+					<DeleteIcon />
+				</IconButton>
 			</Grid>
 			<Typography variant="body2" color="textSecondary" component="p">
 				{moment(comment.updatedAt).format('dddd DD MMMM YYYY hh:mm:ss')}

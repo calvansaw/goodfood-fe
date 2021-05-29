@@ -32,7 +32,6 @@ const CreateFoodForm = () => {
 				foodDesc: values.foodDesc,
 				foodImg: values.foodImg,
 				price: values.price,
-				username: state.user.username,
 			};
 			console.log(payload);
 			console.log(id);

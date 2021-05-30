@@ -1,4 +1,10 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, {
+	useState,
+	useRef,
+	useCallback,
+	useContext,
+	useMemo,
+} from 'react';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import { useMutation, useQueryClient } from 'react-query';
@@ -31,8 +37,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import EditStoreDialogForm from './EditStoreDialogForm';
 import { DialogContent, DialogContentText } from '@material-ui/core';
 import DeleteStore from '../../endpoints/DeleteStore';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const StoreCard = ({ store }) => {
+	const { state } = useContext(AuthContext);
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
 	// console.log(store);
@@ -91,6 +99,11 @@ const StoreCard = ({ store }) => {
 
 	const handleDeleteStore = useCallback(() => deleteStore(), []);
 
+	const isCorrectUser = useMemo(
+		() => state.user?.username === username,
+		[state.user?.username, username]
+	);
+
 	return (
 		<Card className={classes.root}>
 			<CardHeader
@@ -106,27 +119,32 @@ const StoreCard = ({ store }) => {
 								<MenuBookIcon />
 							</IconButton>
 						</Link>
-						<IconButton
-							onClick={handleMoreClick}
-							aria-label="settings"
-						>
-							<MoreVertIcon />
-						</IconButton>
-						<Menu
-							id="menu"
-							anchorEl={anchorEl}
-							keepMounted
-							open={Boolean(anchorEl)}
-							onClose={handleCloseMenu}
-						>
-							<MenuItem onClick={handleCloseMenu}>Menu</MenuItem>
-							<MenuItem onClick={handleEditDialogOpen}>
-								Edit
-							</MenuItem>
-							<MenuItem onClick={handleDeleteDialogOpen}>
-								Delete
-							</MenuItem>
-						</Menu>
+						{isCorrectUser ? (
+							<>
+								<IconButton
+									onClick={handleMoreClick}
+									aria-label="settings"
+								>
+									<MoreVertIcon />
+								</IconButton>
+								<Menu
+									id="menu"
+									anchorEl={anchorEl}
+									keepMounted
+									open={Boolean(anchorEl)}
+									onClose={handleCloseMenu}
+								>
+									<MenuItem onClick={handleEditDialogOpen}>
+										Edit
+									</MenuItem>
+									<MenuItem onClick={handleDeleteDialogOpen}>
+										Delete
+									</MenuItem>
+								</Menu>
+							</>
+						) : (
+							''
+						)}
 					</>
 				}
 				title={storeName}

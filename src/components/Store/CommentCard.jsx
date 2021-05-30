@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext, useMemo } from 'react';
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -29,8 +29,10 @@ import EditComment from '../../endpoints/EditComment';
 import DeleteComment from '../../endpoints/DeleteComment';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const CommentCard = ({ comment, foodId, storeId, setDrawer }) => {
+	const { state } = useContext(AuthContext);
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
 
@@ -94,6 +96,11 @@ const CommentCard = ({ comment, foodId, storeId, setDrawer }) => {
 		onSubmit: submit,
 	});
 
+	const isCorrectUser = useMemo(
+		() => state.user?.username === comment.username,
+		[state.user?.username, comment.username]
+	);
+
 	return (
 		<CardContent>
 			<Typography variant="body2" color="textSecondary" component="p">
@@ -111,13 +118,19 @@ const CommentCard = ({ comment, foodId, storeId, setDrawer }) => {
 					></TextField>
 				</form>
 			</Collapse>
-			<Grid container justify="flex-end" xs={12}>
-				<IconButton onClick={handleExpandClick} size="small">
-					<EditIcon />
-				</IconButton>
-				<IconButton onClick={handleDelete} size="small">
-					<DeleteIcon />
-				</IconButton>
+			<Grid container justify="flex-end">
+				{isCorrectUser ? (
+					<>
+						<IconButton onClick={handleExpandClick} size="small">
+							<EditIcon />
+						</IconButton>
+						<IconButton onClick={handleDelete} size="small">
+							<DeleteIcon />
+						</IconButton>
+					</>
+				) : (
+					''
+				)}
 			</Grid>
 			<Typography variant="body2" color="textSecondary" component="p">
 				{moment(comment.updatedAt).format('dddd DD MMMM YYYY hh:mm:ss')}

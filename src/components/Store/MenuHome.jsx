@@ -22,7 +22,7 @@ import { STORES } from '../../constants/queryKeys';
 
 const MenuHome = ({ data }) => {
 	const { id } = useParams();
-	// const { state } = useContext(AuthContext);
+	const { state } = useContext(AuthContext);
 	// const { isLoading, isError, data, error } = useQuery(STORES, () =>
 	// 	GetStoreQuery('username', state.user.username).then((stores) =>
 	// 		stores.map((store, index) => (
@@ -41,6 +41,11 @@ const MenuHome = ({ data }) => {
 		[data, id]
 	);
 
+	const isCorrectUser = useMemo(
+		() => state.user?.username === store.username,
+		[state.user?.username, store.username]
+	);
+
 	console.log(data);
 	console.log(store);
 	return (
@@ -53,11 +58,15 @@ const MenuHome = ({ data }) => {
 						</Typography>
 					</Button>
 
-					<Grid item>
-						<Link to={`/food/create/${id}`}>
-							<Button> Create Food</Button>
-						</Link>
-					</Grid>
+					{isCorrectUser ? (
+						<Grid item>
+							<Link to={`/food/create/${id}`}>
+								<Button> Create Food</Button>
+							</Link>
+						</Grid>
+					) : (
+						''
+					)}
 				</Grid>
 			</Grid>
 
@@ -65,7 +74,11 @@ const MenuHome = ({ data }) => {
 				<Grid item xs={6}>
 					{store.menu.map((food, index) => (
 						<Grid key={index} item xs={12}>
-							<FoodCard food={food} storeId={id} />
+							<FoodCard
+								food={food}
+								storeId={id}
+								storeUser={store.username}
+							/>
 						</Grid>
 					))}
 				</Grid>

@@ -1,4 +1,10 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, {
+	useState,
+	useRef,
+	useCallback,
+	useMemo,
+	useContext,
+} from 'react';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import { useMutation, useQueryClient } from 'react-query';
@@ -37,8 +43,10 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import EditFoodDialogForm from './EditFoodDialogForm';
+import { AuthContext } from '../../contexts/AuthContext';
 
-const FoodCard = ({ food, storeId }) => {
+const FoodCard = ({ food, storeId, storeUser }) => {
+	const { state } = useContext(AuthContext);
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
 	console.log(food);
@@ -82,6 +90,11 @@ const FoodCard = ({ food, storeId }) => {
 
 	const handleDelete = useCallback(() => deleteFood(), []);
 
+	const isCorrectUser = useMemo(
+		() => state.user?.username === storeUser,
+		[state.user?.username, storeUser]
+	);
+
 	console.log(comments);
 	return (
 		<Card className={classes.root}>
@@ -92,14 +105,18 @@ const FoodCard = ({ food, storeId }) => {
 					</Avatar>
 				}
 				action={
-					<>
-						<IconButton onClick={handleDialogOpen}>
-							<SettingsIcon />
-						</IconButton>
-						<IconButton onClick={handleDelete}>
-							<DeleteForeverIcon />
-						</IconButton>
-					</>
+					isCorrectUser ? (
+						<>
+							<IconButton onClick={handleDialogOpen}>
+								<SettingsIcon />
+							</IconButton>
+							<IconButton onClick={handleDelete}>
+								<DeleteForeverIcon />
+							</IconButton>
+						</>
+					) : (
+						''
+					)
 				}
 				title={foodName}
 				subheader={`$ ${price}`}

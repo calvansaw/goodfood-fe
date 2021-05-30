@@ -33,9 +33,12 @@ Axios.interceptors.response.use(
 			error.response.status == 401 &&
 			!originalRequest._retry
 		) {
-			return Axios.post('/auth/refresh_token', {
-				refreshToken: refreshToken,
-			}).then((res) => {
+			return Axios.post(
+				`${process.env.REACT_APP_BACKEND_URL}/auth/refresh_token`,
+				{
+					refreshToken: refreshToken,
+				}
+			).then((res) => {
 				if (res.status == 200) {
 					localStorage.setItem('access', res.data.accessToken);
 					// localStorage.setItem('refresh', res.data.refreshToken);

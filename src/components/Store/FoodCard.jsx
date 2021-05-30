@@ -107,13 +107,15 @@ const FoodCard = ({ food, storeId }) => {
 			<Dialog open={open} onClose={handleDialogClose}>
 				<DialogTitle id="edit-food">Edit Food</DialogTitle>
 				<Divider />
-				<EditFoodDialogForm
-					ref={formRef}
-					storeId={storeId}
-					foodId={_id}
-					closeDialog={handleDialogClose}
-					food={food}
-				/>
+				<DialogContent>
+					<EditFoodDialogForm
+						ref={formRef}
+						storeId={storeId}
+						foodId={_id}
+						closeDialog={handleDialogClose}
+						food={food}
+					/>
+				</DialogContent>
 				<Divider />
 				<DialogActions>
 					<Button onClick={handleDialogClose}>Cancel</Button>

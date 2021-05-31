@@ -17,8 +17,10 @@ import CreateFoodForm from './components/Store/CreateFoodForm';
 
 const App = () => {
 	const { state } = useContext(AuthContext);
-	const { isLoading, isError, data, error } = useQuery(STORES, () =>
-		GetAllStore()
+	const { isLoading, isError, data, error } = useQuery(
+		STORES,
+		() => GetAllStore(),
+		{ refetchOnWindowFocus: false }
 	);
 	isLoading && console.log('Loading...');
 	isError && console.log('There is an error:', error);

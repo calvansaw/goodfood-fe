@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { LocationContext } from '../../contexts/LocationContext';
 import {
 	withScriptjs,
 	withGoogleMap,
@@ -21,7 +22,7 @@ const reducer = (accumulator, currentValue) => {
 
 const Map = withScriptjs(
 	withGoogleMap(({ currentPosn, storeLocations }) => {
-		// const { state } = useContext(LocationContext);
+		const { state, dispatch } = useContext(LocationContext);
 		const handleDragEnd = (event) => {
 			const lng = event.latLng.lng();
 			const lat = event.latLng.lat();
@@ -31,6 +32,11 @@ const Map = withScriptjs(
 				const addressObj = res.results.reduce(reducer);
 				console.log(res);
 				console.log(addressObj);
+
+				dispatch({
+					type: 'SHIFT',
+					data: { lat, lng, markerPosn: addressObj },
+				});
 			});
 		};
 
@@ -44,8 +50,8 @@ const Map = withScriptjs(
 			>
 				<Marker
 					position={{
-						lat: currentPosn.lat,
-						lng: currentPosn.lng,
+						lat: state.lat,
+						lng: state.lng,
 					}}
 					draggable
 					onDragEnd={handleDragEnd}

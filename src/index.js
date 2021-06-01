@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import AuthContextProvider from './contexts/AuthContext';
+import LocationContextProvider from './contexts/LocationContext';
 import ThemeContextProvider from './contexts/ThemeContext';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -15,16 +16,18 @@ const queryClient = new QueryClient();
 ReactDOM.render(
 	<React.StrictMode>
 		<AuthContextProvider>
-			<ThemeContextProvider>
-				<SnackbarProvider maxSnack={3}>
-					<QueryClientProvider client={queryClient}>
-						<Router>
-							<App />
-							<ReactQueryDevtools initialIsOpen={false} />
-						</Router>
-					</QueryClientProvider>
-				</SnackbarProvider>
-			</ThemeContextProvider>
+			<LocationContextProvider>
+				<ThemeContextProvider>
+					<SnackbarProvider maxSnack={3}>
+						<QueryClientProvider client={queryClient}>
+							<Router>
+								<App />
+								<ReactQueryDevtools initialIsOpen={false} />
+							</Router>
+						</QueryClientProvider>
+					</SnackbarProvider>
+				</ThemeContextProvider>
+			</LocationContextProvider>
 		</AuthContextProvider>
 	</React.StrictMode>,
 	document.getElementById('root')

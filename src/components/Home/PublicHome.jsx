@@ -2,20 +2,27 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { LOCATIONS } from '../../constants/queryKeys';
 import GetLocations from '../../endpoints/GetLocations';
+import { LocationContext } from '../../contexts/LocationContext';
 import { useSnackbar } from 'notistack';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography, Button } from '@material-ui/core';
 import StoreCard from '../Store/StoreCard';
 import Map from '../Map/Map';
 
 const PublicHome = ({ stores, locations }) => {
 	const [currentPosn, setCurrentPosn] = useState({});
+	const { state, dispatch } = useContext(LocationContext);
+	console.log(state);
 
 	useEffect(() => {
 		navigator.geolocation.getCurrentPosition((posn) => {
-			setCurrentPosn({
-				lat: posn.coords.latitude,
-				lng: posn.coords.longitude,
+			dispatch({
+				type: 'INIT',
+				data: { lat: posn.coords.latitude, lng: posn.coords.longitude },
 			});
+			// setCurrentPosn({
+			// 	lat: posn.coords.latitude,
+			// 	lng: posn.coords.longitude,
+			// });
 		});
 	}, []);
 
@@ -56,6 +63,7 @@ const PublicHome = ({ stores, locations }) => {
 					currentPosn={currentPosn}
 					storeLocations={locations}
 				/>
+				<Button>Find All the GoodFoods!</Button>
 			</Grid>
 		</Grid>
 	);

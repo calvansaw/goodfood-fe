@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
 	withScriptjs,
 	withGoogleMap,
@@ -20,9 +20,8 @@ const reducer = (accumulator, currentValue) => {
 };
 
 const Map = withScriptjs(
-	withGoogleMap((props) => {
-		const [currentPosn, setCurrentPosn] = useState({});
-
+	withGoogleMap(({ currentPosn, storeLocations }) => {
+		// const { state } = useContext(LocationContext);
 		const handleDragEnd = (event) => {
 			const lng = event.latLng.lng();
 			const lat = event.latLng.lat();
@@ -34,15 +33,6 @@ const Map = withScriptjs(
 				console.log(addressObj);
 			});
 		};
-
-		useEffect(() => {
-			navigator.geolocation.getCurrentPosition((posn) => {
-				setCurrentPosn({
-					lat: posn.coords.latitude,
-					lng: posn.coords.longitude,
-				});
-			});
-		}, []);
 
 		return (
 			<GoogleMap
@@ -64,6 +54,19 @@ const Map = withScriptjs(
 						<div>You are here!</div>
 					</InfoWindow>
 				</Marker>
+				{storeLocations.map((store, index) => {
+					const [longitude, latitude] = store.location.coordinates;
+					return (
+						<Marker
+							key={index}
+							position={{ lat: latitude, lng: longitude }}
+						>
+							<InfoWindow>
+								<div>{store.storeName}</div>
+							</InfoWindow>
+						</Marker>
+					);
+				})}
 			</GoogleMap>
 		);
 	})

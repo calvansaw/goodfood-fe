@@ -19,7 +19,7 @@ import StoreCard from './StoreCard';
 import { useQuery } from 'react-query';
 import { STORES } from '../../constants/queryKeys';
 
-const StoreHome = ({ data }) => {
+const StoreHome = ({ stores }) => {
 	const { state } = useContext(AuthContext);
 	// const {
 	// 	isLoading,
@@ -35,12 +35,12 @@ const StoreHome = ({ data }) => {
 	// isLoading && console.log('Loading...');
 	// isError && console.log('There is an error:', error);
 
-	const stores = useMemo(
-		() => data.filter((store) => store.username === state.user.username),
-		[data, state.user.username]
+	const userStores = useMemo(
+		() => stores.filter((store) => store.username === state.user.username),
+		[stores, state.user.username]
 	);
 
-	console.log(data);
+	console.log(stores);
 	return (
 		<>
 			<Grid container alignItems="center" direction="column" wrap>
@@ -58,7 +58,7 @@ const StoreHome = ({ data }) => {
 
 			<Grid container alignItems="center" direction="column">
 				<Grid item xs={6}>
-					{stores.map((store, index) => (
+					{userStores.map((store, index) => (
 						<Grid key={index} item xs={12}>
 							<StoreCard store={store} />
 						</Grid>

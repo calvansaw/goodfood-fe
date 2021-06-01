@@ -1,4 +1,5 @@
 import React, { useContext, useMemo } from 'react';
+import { useSnackbar } from 'notistack';
 import LoginForm from './components/Login/LoginForm';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
@@ -7,9 +8,10 @@ import { AuthContext } from './contexts/AuthContext';
 import StoreHome from './components/Store/StoreHome';
 import PublicHome from './components/Home/PublicHome';
 import MenuHome from './components/Store/MenuHome';
-import { useQuery } from 'react-query';
-import { STORES } from './constants/queryKeys';
+import { useQuery, useQueries } from 'react-query';
+import { STORES, LOCATIONS } from './constants/queryKeys';
 import GetAllStore from './endpoints/GetAllStore';
+import GetLocations from './endpoints/GetLocations';
 import { Grid } from '@material-ui/core';
 import StoreCard from './components/Store/StoreCard';
 import CreateStoreForm from './components/Store/CreateStoreForm';
@@ -17,13 +19,39 @@ import CreateFoodForm from './components/Store/CreateFoodForm';
 
 const App = () => {
 	const { state } = useContext(AuthContext);
-	const { isLoading, isError, data, error } = useQuery(
-		STORES,
-		() => GetAllStore(),
-		{ refetchOnWindowFocus: false }
-	);
-	isLoading && console.log('Loading...');
-	isError && console.log('There is an error:', error);
+	const { enqueueSnackbar } = useSnackbar();
+	const [stores, locations] = useQueries([
+		{
+			queryKey: STORES,
+			queryFn: () => GetAllStore(),
+			refetchOnWindowFocus: false,
+		},
+		{
+			queryKey: LOCATIONS,
+			queryFn: () => GetLocations(),
+			refetchOnWindowFocus: false,
+		},
+	]);
+	stores.isLoading &&
+		enqueueSnackbar('Stores loading...', {
+			variant: 'info',
+		});
+	locations.isLoading &&
+		enqueueSnackbar('Locations loading...', {
+			variant: 'info',
+		});
+	if (stores.isError) {
+		enqueueSnackbar('Error loading stores!', {
+			variant: 'error',
+		});
+		console.log(stores.error);
+	}
+	if (locations.isError) {
+		enqueueSnackbar('Error loading locations!', {
+			variant: 'error',
+		});
+		console.log(locations.error);
+	}
 
 	const { isAuth, isOwner } = useMemo(
 		() => ({
@@ -36,7 +64,7 @@ const App = () => {
 	console.log(state);
 	console.log(isAuth);
 	console.log(isOwner);
-	console.log(data);
+	console.log(stores.data);
 
 	return (
 		<div className="App">
@@ -53,11 +81,11 @@ const App = () => {
 						<CreateStoreForm />
 					</Route>
 					<Route exact path="/store/menu/:id">
-						{data && <MenuHome data={data} />}
+						{stores.data && <MenuHome stores={stores.data} />}
 					</Route>
 					<Route exact path="/store">
-						{isOwner && data ? (
-							<StoreHome data={data} />
+						{isOwner && stores.data ? (
+							<StoreHome stores={stores.data} />
 						) : (
 							<Redirect to="/" />
 						)}
@@ -66,7 +94,12 @@ const App = () => {
 						<CreateFoodForm />
 					</Route>
 					<Route exact path="/">
-						{data && <PublicHome data={data} />}
+						{stores.data && locations.data && (
+							<PublicHome
+								stores={stores.data}
+								locations={locations.data}
+							/>
+						)}
 					</Route>
 				</Switch>
 			</div>

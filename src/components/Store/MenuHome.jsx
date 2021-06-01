@@ -20,7 +20,7 @@ import FoodCard from './FoodCard';
 import { useQuery } from 'react-query';
 import { STORES } from '../../constants/queryKeys';
 
-const MenuHome = ({ data }) => {
+const MenuHome = ({ stores }) => {
 	const { id } = useParams();
 	const { state } = useContext(AuthContext);
 	// const { isLoading, isError, data, error } = useQuery(STORES, () =>
@@ -37,8 +37,8 @@ const MenuHome = ({ data }) => {
 	// isError && console.log('There is an error:', error);
 
 	const [store] = useMemo(
-		() => data.filter((store) => store._id === id),
-		[data, id]
+		() => stores.filter((store) => store._id === id),
+		[stores, id]
 	);
 
 	const isCorrectUser = useMemo(
@@ -46,7 +46,7 @@ const MenuHome = ({ data }) => {
 		[state.user?.username, store.username]
 	);
 
-	console.log(data);
+	console.log(stores);
 	console.log(store);
 	return (
 		<>

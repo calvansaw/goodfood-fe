@@ -1,9 +1,24 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { useQuery } from 'react-query';
+import { LOCATIONS } from '../../constants/queryKeys';
+import GetLocations from '../../endpoints/GetLocations';
+import { useSnackbar } from 'notistack';
 import { Grid, Typography } from '@material-ui/core';
 import StoreCard from '../Store/StoreCard';
 import Map from '../Map/Map';
 
-const PublicHome = ({ data }) => {
+const PublicHome = ({ stores, locations }) => {
+	const [currentPosn, setCurrentPosn] = useState({});
+
+	useEffect(() => {
+		navigator.geolocation.getCurrentPosition((posn) => {
+			setCurrentPosn({
+				lat: posn.coords.latitude,
+				lng: posn.coords.longitude,
+			});
+		});
+	}, []);
+
 	return (
 		<Grid container direction="row">
 			<Grid item xs={6}>
@@ -14,7 +29,7 @@ const PublicHome = ({ data }) => {
 						</Typography>
 					</Grid>
 					<Grid xs={6}>
-						{data.map((store, index) => (
+						{stores.map((store, index) => (
 							<Grid key={index} item xs={12}>
 								<StoreCard store={store} />
 							</Grid>
@@ -38,6 +53,8 @@ const PublicHome = ({ data }) => {
 						/>
 					}
 					mapElement={<div style={{ height: `100%` }} />}
+					currentPosn={currentPosn}
+					storeLocations={locations}
 				/>
 			</Grid>
 		</Grid>

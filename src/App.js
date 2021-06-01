@@ -1,10 +1,11 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useMemo, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import LoginForm from './components/Login/LoginForm';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import RegisterForm from './components/Register/RegisterForm';
 import { AuthContext } from './contexts/AuthContext';
+import { LocationContext } from './contexts/LocationContext';
 import StoreHome from './components/Store/StoreHome';
 import PublicHome from './components/Home/PublicHome';
 import MenuHome from './components/Store/MenuHome';
@@ -12,6 +13,7 @@ import { useQuery, useQueries } from 'react-query';
 import { STORES, LOCATIONS } from './constants/queryKeys';
 import GetAllStore from './endpoints/GetAllStore';
 import GetLocations from './endpoints/GetLocations';
+import GetByCenterRadius from './endpoints/GetByCenterRadius';
 import { Grid } from '@material-ui/core';
 import StoreCard from './components/Store/StoreCard';
 import CreateStoreForm from './components/Store/CreateStoreForm';
@@ -19,6 +21,10 @@ import CreateFoodForm from './components/Store/CreateFoodForm';
 
 const App = () => {
 	const { state } = useContext(AuthContext);
+	const { state: locationState, dispatch: locationDispatch } =
+		useContext(LocationContext);
+	const { lat, lng } = locationState;
+	const dist = 800;
 	const { enqueueSnackbar } = useSnackbar();
 	const [stores, locations] = useQueries([
 		{
@@ -27,8 +33,8 @@ const App = () => {
 			refetchOnWindowFocus: false,
 		},
 		{
-			queryKey: LOCATIONS,
-			queryFn: () => GetLocations(),
+			queryKey: [LOCATIONS, lat, lng, dist],
+			queryFn: () => GetByCenterRadius(lat, lng, dist),
 			refetchOnWindowFocus: false,
 		},
 	]);
@@ -61,10 +67,20 @@ const App = () => {
 		[state]
 	);
 
+	useEffect(() => {
+		navigator.geolocation.getCurrentPosition((posn) => {
+			locationDispatch({
+				type: 'INIT',
+				data: { lat: posn.coords.latitude, lng: posn.coords.longitude },
+			});
+		});
+	}, []);
+
 	console.log(state);
 	console.log(isAuth);
 	console.log(isOwner);
-	console.log(stores.data);
+	console.log(locationState);
+	console.log(locations.data);
 
 	return (
 		<div className="App">
@@ -94,12 +110,10 @@ const App = () => {
 						<CreateFoodForm />
 					</Route>
 					<Route exact path="/">
-						{stores.data && locations.data && (
-							<PublicHome
-								stores={stores.data}
-								locations={locations.data}
-							/>
-						)}
+						<PublicHome
+							stores={stores.data}
+							locations={locations.data}
+						/>
 					</Route>
 				</Switch>
 			</div>

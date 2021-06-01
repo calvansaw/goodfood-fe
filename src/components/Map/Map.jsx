@@ -21,7 +21,7 @@ const reducer = (accumulator, currentValue) => {
 };
 
 const Map = withScriptjs(
-	withGoogleMap(({ currentPosn, storeLocations }) => {
+	withGoogleMap(({ storeLocations }) => {
 		const { state, dispatch } = useContext(LocationContext);
 		const handleDragEnd = (event) => {
 			const lng = event.latLng.lng();
@@ -60,19 +60,27 @@ const Map = withScriptjs(
 						<div>You are here!</div>
 					</InfoWindow>
 				</Marker>
-				{storeLocations.map((store, index) => {
-					const [longitude, latitude] = store.location.coordinates;
-					return (
-						<Marker
-							key={index}
-							position={{ lat: latitude, lng: longitude }}
-						>
-							<InfoWindow>
-								<div>{store.storeName}</div>
-							</InfoWindow>
-						</Marker>
-					);
-				})}
+				{storeLocations &&
+					storeLocations.map((store, index) => {
+						const [longitude, latitude] =
+							store.location.coordinates;
+						return (
+							<Marker
+								key={index}
+								position={{ lat: latitude, lng: longitude }}
+							>
+								<InfoWindow>
+									<>
+										<div>{store.storeName}</div>
+										<div>
+											distance: {store.dist.calculated}m
+											away
+										</div>
+									</>
+								</InfoWindow>
+							</Marker>
+						);
+					})}
 			</GoogleMap>
 		);
 	})

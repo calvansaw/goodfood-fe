@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useQuery } from 'react-query';
-import { LOCATIONS } from '../../constants/queryKeys';
+import { useQuery, useQueryClient } from 'react-query';
 import GetLocations from '../../endpoints/GetLocations';
+import { STORES, LOCATIONS } from '../../constants/queryKeys';
+import GetByCenterRadius from '../../endpoints/GetByCenterRadius';
 import { LocationContext } from '../../contexts/LocationContext';
 import { useSnackbar } from 'notistack';
 import { Grid, Typography, Button } from '@material-ui/core';
@@ -9,23 +10,7 @@ import StoreCard from '../Store/StoreCard';
 import Map from '../Map/Map';
 
 const PublicHome = ({ stores, locations }) => {
-	const [currentPosn, setCurrentPosn] = useState({});
-	const { state, dispatch } = useContext(LocationContext);
-	console.log(state);
-
-	useEffect(() => {
-		navigator.geolocation.getCurrentPosition((posn) => {
-			dispatch({
-				type: 'INIT',
-				data: { lat: posn.coords.latitude, lng: posn.coords.longitude },
-			});
-			// setCurrentPosn({
-			// 	lat: posn.coords.latitude,
-			// 	lng: posn.coords.longitude,
-			// });
-		});
-	}, []);
-
+	const queryClient = useQueryClient();
 	return (
 		<Grid container direction="row">
 			<Grid item xs={6}>
@@ -36,11 +21,12 @@ const PublicHome = ({ stores, locations }) => {
 						</Typography>
 					</Grid>
 					<Grid xs={6}>
-						{stores.map((store, index) => (
-							<Grid key={index} item xs={12}>
-								<StoreCard store={store} />
-							</Grid>
-						))}
+						{stores &&
+							stores.map((store, index) => (
+								<Grid key={index} item xs={12}>
+									<StoreCard store={store} />
+								</Grid>
+							))}
 					</Grid>
 				</Grid>
 			</Grid>
@@ -60,10 +46,13 @@ const PublicHome = ({ stores, locations }) => {
 						/>
 					}
 					mapElement={<div style={{ height: `100%` }} />}
-					currentPosn={currentPosn}
 					storeLocations={locations}
 				/>
-				<Button>Find All the GoodFoods!</Button>
+				<Button
+					onClick={() => queryClient.invalidateQueries(LOCATIONS)}
+				>
+					Find all the GoodFoods near me!
+				</Button>
 			</Grid>
 		</Grid>
 	);

@@ -64,6 +64,7 @@ const Map = withScriptjs(
 					storeLocations.map((store, index) => {
 						const [longitude, latitude] =
 							store.location.coordinates;
+						const dist = store.dist.calculated.toFixed(2);
 						return (
 							<Marker
 								key={index}
@@ -72,10 +73,7 @@ const Map = withScriptjs(
 								<InfoWindow>
 									<>
 										<div>{store.storeName}</div>
-										<div>
-											distance: {store.dist.calculated}m
-											away
-										</div>
+										<div>distance: {dist}m away</div>
 									</>
 								</InfoWindow>
 							</Marker>

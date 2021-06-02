@@ -21,19 +21,6 @@ import { STORES } from '../../constants/queryKeys';
 
 const StoreHome = ({ stores }) => {
 	const { state } = useContext(AuthContext);
-	// const {
-	// 	isLoading,
-	// 	isError,
-	// 	data: stores,
-	// 	error,
-	// } = useQuery(STORES, () =>
-	// 	GetStoreQuery('username', state.user.username).then((stores) =>
-
-	// 	)
-	// );
-
-	// isLoading && console.log('Loading...');
-	// isError && console.log('There is an error:', error);
 
 	const userStores = useMemo(
 		() => stores.filter((store) => store.username === state.user.username),
@@ -52,6 +39,11 @@ const StoreHome = ({ stores }) => {
 				<Grid item>
 					<Link to="/store/create">
 						<Button>Create Store</Button>
+					</Link>
+				</Grid>
+				<Grid item>
+					<Link to="/location/create">
+						<Button>Create Location</Button>
 					</Link>
 				</Grid>
 			</Grid>

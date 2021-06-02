@@ -16,6 +16,7 @@ import GetLocations from './endpoints/GetLocations';
 import GetByCenterRadius from './endpoints/GetByCenterRadius';
 import { Grid } from '@material-ui/core';
 import StoreCard from './components/Store/StoreCard';
+import CreateLocationForm from './components/Store/CreateLocationForm';
 import CreateStoreForm from './components/Store/CreateStoreForm';
 import CreateFoodForm from './components/Store/CreateFoodForm';
 
@@ -93,8 +94,11 @@ const App = () => {
 					<Route path="/register">
 						{isAuth ? <Redirect to="/" /> : <RegisterForm />}
 					</Route>
+					<Route exact path="/location/create">
+						{isOwner ? <CreateLocationForm /> : <Redirect to="/" />}
+					</Route>
 					<Route exact path="/store/create">
-						<CreateStoreForm />
+						{isOwner ? <CreateStoreForm /> : <Redirect to="/" />}
 					</Route>
 					<Route exact path="/store/menu/:id">
 						{stores.data && <MenuHome stores={stores.data} />}

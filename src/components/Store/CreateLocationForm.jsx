@@ -18,7 +18,7 @@ import CreateLocation from '../../endpoints/CreateLocation';
 import { useHistory } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSnackbar } from 'notistack';
-import { LOCATIONS } from '../../constants/queryKeys';
+import { ALL_LOCATIONS, LOCATIONS } from '../../constants/queryKeys';
 import Map from '../Map/Map';
 import * as yup from 'yup';
 
@@ -51,6 +51,7 @@ const CreateLocationForm = () => {
 				enqueueSnackbar('Create location successful!', {
 					variant: 'success',
 				});
+				queryClient.invalidateQueries(ALL_LOCATIONS);
 				queryClient.invalidateQueries(LOCATIONS);
 				history.push('/store');
 			},

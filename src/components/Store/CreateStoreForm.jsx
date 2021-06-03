@@ -45,7 +45,7 @@ const CreateStoreForm = () => {
 					variant: 'success',
 				});
 				queryClient.invalidateQueries(STORES);
-				history.push('/store');
+				history.push('/location/create');
 			},
 		}
 	);

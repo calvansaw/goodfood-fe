@@ -18,14 +18,38 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import StoreCard from './StoreCard';
 import { useQuery } from 'react-query';
 import { STORES } from '../../constants/queryKeys';
+import Divider from '@material-ui/core/Divider';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { DialogContent, DialogContentText } from '@material-ui/core';
+import EditLocationDialogForm from './EditLocationDialogForm';
 
-const StoreHome = ({ stores }) => {
+const StoreHome = ({ stores, allLocations }) => {
 	const { state } = useContext(AuthContext);
 
 	const userStores = useMemo(
 		() => stores.filter((store) => store.username === state.user.username),
 		[stores, state.user.username]
 	);
+
+	const userLocations = useMemo(
+		() =>
+			allLocations.filter(
+				(location) => location.username === state.user.username
+			),
+		[allLocations, state.user.username]
+	);
+
+	const [openEditLocationsDialog, setOpenEditLocationsDialog] =
+		useState(false);
+
+	const handleEditDialogOpen = () => {
+		setOpenEditLocationsDialog(true);
+	};
+	const handleEditDialogClose = () => {
+		setOpenEditLocationsDialog(false);
+	};
 
 	console.log(stores);
 	return (
@@ -45,6 +69,33 @@ const StoreHome = ({ stores }) => {
 					<Link to="/location/create">
 						<Button>Create Location</Button>
 					</Link>
+				</Grid>
+				<Grid item>
+					<Button onClick={handleEditDialogOpen}>
+						Edit Locations
+					</Button>
+					<Dialog
+						open={openEditLocationsDialog}
+						onClose={handleEditDialogClose}
+					>
+						<DialogTitle>Edit Locations</DialogTitle>
+						<Divider />
+						<DialogContent>
+							{userLocations.map((location, index) => (
+								<EditLocationDialogForm
+									key={index}
+									location={location}
+									closeDialog={setOpenEditLocationsDialog}
+								/>
+							))}
+						</DialogContent>
+						<Divider />
+						<DialogActions>
+							<Button onClick={handleEditDialogClose}>
+								Cancel
+							</Button>
+						</DialogActions>
+					</Dialog>
 				</Grid>
 			</Grid>
 

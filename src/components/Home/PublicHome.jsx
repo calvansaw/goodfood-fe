@@ -51,7 +51,7 @@ const PublicHome = ({ stores, locations }) => {
 				<Button
 					onClick={() => queryClient.invalidateQueries(LOCATIONS)}
 				>
-					Find all the GoodFoods near me!
+					Find all the GoodFoods!
 				</Button>
 			</Grid>
 		</Grid>

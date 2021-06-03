@@ -10,7 +10,7 @@ import StoreHome from './components/Store/StoreHome';
 import PublicHome from './components/Home/PublicHome';
 import MenuHome from './components/Store/MenuHome';
 import { useQuery, useQueries } from 'react-query';
-import { STORES, LOCATIONS } from './constants/queryKeys';
+import { STORES, LOCATIONS, ALL_LOCATIONS } from './constants/queryKeys';
 import GetAllStore from './endpoints/GetAllStore';
 import GetLocations from './endpoints/GetLocations';
 import GetByCenterRadius from './endpoints/GetByCenterRadius';
@@ -27,7 +27,7 @@ const App = () => {
 	const { lat, lng } = locationState;
 	const dist = 800;
 	const { enqueueSnackbar } = useSnackbar();
-	const [stores, locations] = useQueries([
+	const [stores, locations, allLocations] = useQueries([
 		{
 			queryKey: STORES,
 			queryFn: () => GetAllStore(),
@@ -36,6 +36,11 @@ const App = () => {
 		{
 			queryKey: [LOCATIONS, lat, lng, dist],
 			queryFn: () => GetByCenterRadius(lat, lng, dist),
+			refetchOnWindowFocus: false,
+		},
+		{
+			queryKey: ALL_LOCATIONS,
+			queryFn: () => GetLocations(),
 			refetchOnWindowFocus: false,
 		},
 	]);
@@ -47,6 +52,10 @@ const App = () => {
 		enqueueSnackbar('Locations loading...', {
 			variant: 'info',
 		});
+	allLocations.isLoading &&
+		enqueueSnackbar('All Locations loading...', {
+			variant: 'info',
+		});
 	if (stores.isError) {
 		enqueueSnackbar('Error loading stores!', {
 			variant: 'error',
@@ -55,6 +64,12 @@ const App = () => {
 	}
 	if (locations.isError) {
 		enqueueSnackbar('Error loading locations!', {
+			variant: 'error',
+		});
+		console.log(locations.error);
+	}
+	if (allLocations.isError) {
+		enqueueSnackbar('Error loading All Locations!', {
 			variant: 'error',
 		});
 		console.log(locations.error);
@@ -105,7 +120,10 @@ const App = () => {
 					</Route>
 					<Route exact path="/store">
 						{isOwner && stores.data ? (
-							<StoreHome stores={stores.data} />
+							<StoreHome
+								stores={stores.data}
+								allLocations={allLocations.data}
+							/>
 						) : (
 							<Redirect to="/" />
 						)}

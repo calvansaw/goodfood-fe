@@ -129,6 +129,7 @@ const App = () => {
 						<PublicHome
 							stores={stores.data}
 							locations={locations.data}
+							allLocations={allLocations.data}
 						/>
 					</Route>
 				</Switch>

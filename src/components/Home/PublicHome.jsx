@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import GetLocations from '../../endpoints/GetLocations';
 import { STORES, LOCATIONS } from '../../constants/queryKeys';
@@ -9,8 +9,13 @@ import { Grid, Typography, Button } from '@material-ui/core';
 import StoreCard from '../Store/StoreCard';
 import Map from '../Map/Map';
 
-const PublicHome = ({ stores, locations }) => {
-	const queryClient = useQueryClient();
+const PublicHome = ({ stores, locations, allLocations }) => {
+	const [showAllLocations, setShowAllLocations] = useState(false);
+
+	const handleClick = () => {
+		setShowAllLocations(!showAllLocations);
+	};
+
 	return (
 		<Grid container direction="row">
 			<Grid item xs={6}>
@@ -31,26 +36,38 @@ const PublicHome = ({ stores, locations }) => {
 				</Grid>
 			</Grid>
 			<Grid item xs={6}>
-				{locations && (
-					<Map
-						googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_MAP_API_KEY}&v=3.exp&libraries=geometry,drawing,places`}
-						loadingElement={<div style={{ height: `100%` }} />}
-						containerElement={
-							<div
-								style={{
-									position: 'fixed',
-									width: '45%',
-									height: '60%',
-									top: '15%',
-									right: '2%',
-								}}
-							/>
-						}
-						mapElement={<div style={{ height: `100%` }} />}
-						storeLocations={locations}
-					/>
+				{locations && allLocations && (
+					<>
+						<Map
+							googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_MAP_API_KEY}&v=3.exp&libraries=geometry,drawing,places`}
+							loadingElement={<div style={{ height: `100%` }} />}
+							containerElement={
+								<div
+									style={{
+										position: 'fixed',
+										width: '45%',
+										height: '60%',
+										top: '15%',
+										right: '2%',
+									}}
+								/>
+							}
+							mapElement={<div style={{ height: `100%` }} />}
+							storeLocations={
+								showAllLocations ? allLocations : locations
+							}
+						/>
+						<Typography color="textPrimary" variant="h4">
+							GoodFoods found:{' '}
+							{showAllLocations
+								? allLocations.length
+								: locations.length}
+						</Typography>
+					</>
 				)}
-				<Button>Find all the GoodFoods!</Button>
+				<Button onClick={handleClick}>
+					Toggle find all goodfoods!
+				</Button>
 			</Grid>
 		</Grid>
 	);

@@ -61,7 +61,7 @@ const Map = withScriptjs(
 					storeLocations.map((store, index) => {
 						const [longitude, latitude] =
 							store.location.coordinates;
-						const dist = store.dist.calculated.toFixed(2);
+						const dist = store.dist?.calculated.toFixed(2);
 						return (
 							<Marker
 								key={index}

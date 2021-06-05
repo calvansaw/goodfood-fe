@@ -92,12 +92,6 @@ const App = () => {
 		});
 	}, []);
 
-	console.log(state);
-	console.log(isAuth);
-	console.log(isOwner);
-	console.log(locationState);
-	console.log(locations.data);
-
 	return (
 		<div className="App">
 			<Navbar />

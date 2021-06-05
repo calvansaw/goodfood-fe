@@ -26,12 +26,9 @@ const Map = withScriptjs(
 		const handleDragEnd = (event) => {
 			const lng = event.latLng.lng();
 			const lat = event.latLng.lat();
-			console.log(lng, lat);
 
 			Geocode.fromLatLng(lat, lng).then((res) => {
 				const addressObj = res.results.reduce(reducer);
-				console.log(res);
-				console.log(addressObj);
 
 				dispatch({
 					type: 'SHIFT',

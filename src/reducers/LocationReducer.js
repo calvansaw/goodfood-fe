@@ -1,7 +1,6 @@
 export const LocationReducer = (state, action) => {
 	switch (action.type) {
 		case 'INIT': {
-			console.log(action.data);
 			return {
 				...state,
 				lat: action.data.lat,
@@ -9,7 +8,6 @@ export const LocationReducer = (state, action) => {
 			};
 		}
 		case 'SHIFT': {
-			console.log(action.data);
 			return {
 				...state,
 				lat: action.data.lat,

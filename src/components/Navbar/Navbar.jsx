@@ -39,10 +39,9 @@ const Navbar = () => {
 
 	const handleSignOut = async () => {
 		const data = await SignOut();
-		console.log(data);
 		data && dispatch({ type: 'LOGOUT' });
 	};
-	console.log(state);
+
 	return (
 		<div className={classes.root}>
 			<AppBar position="static">

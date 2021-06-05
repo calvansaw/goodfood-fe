@@ -9,8 +9,7 @@ const AuthContextProvider = ({ children }) => {
 	const token = localStorage.getItem('access');
 	const userJSON = localStorage.getItem('user');
 	const userObj = JSON.parse(userJSON);
-	console.log(!!token);
-	console.log(userObj);
+
 	const initialState = {
 		isAuth: !!token,
 		user: userObj,

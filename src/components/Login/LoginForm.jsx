@@ -2,7 +2,7 @@ import React, { useState, useCallback, useContext } from 'react';
 import clsx from 'clsx';
 import {
 	IconButton,
-	Input,
+	TextField,
 	InputLabel,
 	InputAdornment,
 	Button,
@@ -14,14 +14,20 @@ import { AuthContext } from '../../contexts/AuthContext';
 import SignIn from '../../endpoints/SignIn';
 import { useMutation } from 'react-query';
 import { useSnackbar } from 'notistack';
-// import { useHistory} from 'react-router-dom';
+import * as yup from 'yup';
 
 const LoginForm = () => {
 	// let history = useHistory();
 	const { state, dispatch } = useContext(AuthContext);
 	const { enqueueSnackbar } = useSnackbar();
 	const { mutate } = useMutation(
-		(user) => SignIn(user.username, user.password),
+		(values) => {
+			let payload = {
+				username: values.username,
+				password: values.password,
+			};
+			return SignIn(payload);
+		},
 		{
 			onError: () => {
 				enqueueSnackbar('Something went wrong, please try again!', {
@@ -29,10 +35,15 @@ const LoginForm = () => {
 				});
 			},
 			onSuccess: (data) => {
-				console.log(data);
+				const resData = data.data;
+				const jsonData = JSON.stringify(resData.user);
+				localStorage.setItem('access', resData.accessToken);
+				localStorage.setItem('refresh', resData.refreshToken);
+				localStorage.setItem('user', jsonData);
+
 				dispatch({
 					type: 'LOGIN',
-					data,
+					data: resData,
 				});
 				enqueueSnackbar('Login successful!', {
 					variant: 'success',
@@ -48,15 +59,20 @@ const LoginForm = () => {
 		[mutate]
 	);
 
-	const { values, handleChange, handleSubmit } = useFormik({
-		initialValues: {
-			username: '',
-			password: '',
-		},
-		onSubmit: submit,
+	const validationSchema = yup.object({
+		username: yup.string().required('Username is required'),
+		password: yup.string().required('Password is required'),
 	});
 
-	console.log(state);
+	const { values, handleChange, handleBlur, handleSubmit, touched, errors } =
+		useFormik({
+			initialValues: {
+				username: '',
+				password: '',
+			},
+			validationSchema,
+			onSubmit: submit,
+		});
 
 	const classes = useStyles();
 	const [showPassword, setShowPassword] = useState(false);
@@ -68,22 +84,28 @@ const LoginForm = () => {
 	return (
 		<form onSubmit={handleSubmit}>
 			<InputLabel htmlFor="username">Username</InputLabel>
-			<Input
+			<TextField
 				className={clsx(classes.margin, classes.textField)}
 				id="username"
 				name="username"
 				type="text"
 				value={values.username}
 				onChange={handleChange}
+				onBlur={handleBlur}
+				error={touched.username && Boolean(errors.username)}
+				helperText={touched.username && errors.username}
 			/>
 			<InputLabel htmlFor="password">Password</InputLabel>
-			<Input
+			<TextField
 				className={clsx(classes.margin, classes.textField)}
 				id="password"
 				name="password"
 				type={showPassword ? 'text' : 'password'}
 				value={values.password}
 				onChange={handleChange}
+				onBlur={handleBlur}
+				error={touched.username && Boolean(errors.username)}
+				helperText={touched.username && errors.username}
 				endAdornment={
 					<InputAdornment position="end">
 						<IconButton

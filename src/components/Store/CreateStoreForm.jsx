@@ -26,10 +26,13 @@ const CreateStoreForm = () => {
 	const queryClient = useQueryClient();
 	const { mutate } = useMutation(
 		(values) => {
+			const avatar = state.user.avatar ? state.user.avatar : '';
+
 			let payload = {
 				storeName: values.storeName,
 				storeDesc: values.storeDesc,
 				storeImg: values.storeImg,
+				storeAvatar: avatar,
 				username: state.user.username,
 			};
 			return CreateStore(payload);
@@ -40,10 +43,14 @@ const CreateStoreForm = () => {
 					variant: 'error',
 				});
 			},
-			onSuccess: () => {
-				enqueueSnackbar('Create store successful!', {
-					variant: 'success',
-				});
+			onSuccess: (data) => {
+				const resStoreId = data.data._id;
+				enqueueSnackbar(
+					`Create store successful! Your store ID is: ${resStoreId}`,
+					{
+						variant: 'success',
+					}
+				);
 				queryClient.invalidateQueries(STORES);
 				history.push('/location/create');
 			},

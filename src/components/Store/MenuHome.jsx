@@ -46,17 +46,16 @@ const MenuHome = ({ stores }) => {
 		[state.user?.username, store.username]
 	);
 
-	console.log(stores);
-	console.log(store);
 	return (
 		<>
 			<Grid container alignItems="center" direction="column" wrap>
 				<Grid item xs={12}>
-					<Button size="large">
-						<Typography color="textPrimary" variant="h5">
-							Menu of store id: {id}
-						</Typography>
-					</Button>
+					<Typography color="textPrimary" variant="h2">
+						Menu of {store.storeName}
+					</Typography>
+					<Typography color="textPrimary" variant="h5">
+						Store ID: {id}
+					</Typography>
 
 					{isCorrectUser ? (
 						<Grid item>
@@ -78,6 +77,7 @@ const MenuHome = ({ stores }) => {
 								food={food}
 								storeId={id}
 								storeUser={store.username}
+								storeAvatar={store.storeAvatar}
 							/>
 						</Grid>
 					))}

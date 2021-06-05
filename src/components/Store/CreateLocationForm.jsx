@@ -32,6 +32,7 @@ const CreateLocationForm = () => {
 		(values) => {
 			let payload = {
 				storeName: values.storeName,
+				storeId: values.storeId,
 				location: {
 					type: 'Point',
 					coordinates: [values.longitude, values.latitude],
@@ -63,6 +64,7 @@ const CreateLocationForm = () => {
 
 	const validationSchema = yup.object({
 		storeName: yup.string().required('Store name is required'),
+		storeId: yup.string().required('Store ID is required'),
 		latitude: yup.number().required('Store latitude is required'),
 		longitude: yup.number().required('Store longitude is required'),
 		address: yup.string().required('Store address is required'),
@@ -79,6 +81,7 @@ const CreateLocationForm = () => {
 	} = useFormik({
 		initialValues: {
 			storeName: '',
+			storeId: '',
 			latitude: 0,
 			longitude: 0,
 			address: '',
@@ -128,6 +131,24 @@ const CreateLocationForm = () => {
 								helperText={
 									touched.storeName && errors.storeName
 								}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<InputLabel htmlFor="storeId">Store ID</InputLabel>
+							<TextField
+								className={clsx(
+									classes.margin,
+									classes.textField
+								)}
+								id="storeId"
+								name="storeId"
+								type="text"
+								onChange={handleChange}
+								onBlur={handleBlur}
+								error={
+									touched.storeId && Boolean(errors.storeId)
+								}
+								helperText={touched.storeId && errors.storeId}
 							/>
 						</Grid>
 						<Grid item xs={12}>

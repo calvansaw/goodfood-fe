@@ -104,13 +104,17 @@ const StoreCard = ({ store }) => {
 		[state.user?.username, username]
 	);
 
+	const defaultAvatar = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYsJ-ql4R35gpthswZYexF3-8t82OvlKda4Q&usqp=CAU`;
+
 	return (
 		<Card className={classes.root}>
 			<CardHeader
 				avatar={
-					<Avatar aria-label="recipe" className={classes.avatar}>
-						R
-					</Avatar>
+					<Avatar
+						aria-label="avatar"
+						src={store.storeAvatar || defaultAvatar}
+						className={classes.avatar}
+					/>
 				}
 				action={
 					<>
@@ -195,24 +199,6 @@ const StoreCard = ({ store }) => {
 					{storeDesc}
 				</Typography>
 			</CardContent>
-			<CardActions disableSpacing>
-				<IconButton aria-label="add to favorites">
-					<FavoriteIcon />
-				</IconButton>
-				<IconButton aria-label="share">
-					<ShareIcon />
-				</IconButton>
-				<IconButton
-					className={clsx(classes.expand, {
-						[classes.expandOpen]: expanded,
-					})}
-					onClick={handleExpandClick}
-					aria-expanded={expanded}
-					aria-label="show more"
-				>
-					<ExpandMoreIcon />
-				</IconButton>
-			</CardActions>
 		</Card>
 	);
 };

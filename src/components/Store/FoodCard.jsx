@@ -45,7 +45,7 @@ import TextField from '@material-ui/core/TextField';
 import EditFoodDialogForm from './EditFoodDialogForm';
 import { AuthContext } from '../../contexts/AuthContext';
 
-const FoodCard = ({ food, storeId, storeUser }) => {
+const FoodCard = ({ food, storeId, storeUser, storeAvatar }) => {
 	const { state } = useContext(AuthContext);
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
@@ -95,14 +95,17 @@ const FoodCard = ({ food, storeId, storeUser }) => {
 		[state.user?.username, storeUser]
 	);
 
-	console.log(comments);
+	const defaultAvatar = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYsJ-ql4R35gpthswZYexF3-8t82OvlKda4Q&usqp=CAU`;
+
 	return (
 		<Card className={classes.root}>
 			<CardHeader
 				avatar={
-					<Avatar aria-label="recipe" className={classes.avatar}>
-						R
-					</Avatar>
+					<Avatar
+						aria-label="avatar"
+						src={storeAvatar || defaultAvatar}
+						className={classes.avatar}
+					/>
 				}
 				action={
 					isCorrectUser ? (
@@ -152,12 +155,6 @@ const FoodCard = ({ food, storeId, storeUser }) => {
 				</Typography>
 			</CardContent>
 			<CardActions disableSpacing>
-				<IconButton aria-label="add to favorites">
-					<FavoriteIcon />
-				</IconButton>
-				<IconButton aria-label="share">
-					<ShareIcon />
-				</IconButton>
 				<IconButton
 					className={clsx(classes.expand, {
 						[classes.expandOpen]: expanded,

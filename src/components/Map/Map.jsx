@@ -72,7 +72,11 @@ const Map = withScriptjs(
 							>
 								<InfoWindow>
 									<>
-										<div>{store.storeName}</div>
+										<a
+											href={`/store/menu/${store.storeId}`}
+										>
+											<div>{store.storeName}</div>
+										</a>
 										<div>distance: {dist}m away</div>
 									</>
 								</InfoWindow>

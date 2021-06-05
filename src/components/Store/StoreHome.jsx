@@ -72,13 +72,15 @@ const StoreHome = ({ stores, allLocations }) => {
 				</Grid>
 				<Grid item>
 					<Button onClick={handleEditDialogOpen}>
-						Edit Locations
+						Edit Store Location
 					</Button>
 					<Dialog
 						open={openEditLocationsDialog}
 						onClose={handleEditDialogClose}
 					>
-						<DialogTitle>Edit Locations</DialogTitle>
+						<DialogTitle>
+							Change name or delete store location on map
+						</DialogTitle>
 						<Divider />
 						<DialogContent>
 							{userLocations.map((location, index) => (

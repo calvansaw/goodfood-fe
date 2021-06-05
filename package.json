@@ -50,7 +50,7 @@
   },
   "proxy": {
     "/api": {
-      "target": "https://goodfood-be.herokuapp.com/",
+      "target": "https://goodfood-be.herokuapp.com",
       "pathRewrite": {
         "^/api": "/"
       }

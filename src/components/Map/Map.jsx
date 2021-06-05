@@ -44,14 +44,14 @@ const Map = withScriptjs(
 			<GoogleMap
 				defaultZoom={17}
 				defaultCenter={{
-					lat: 1.2864939063899405,
-					lng: 103.81760895252228,
+					lat: state.lat || 1.2864939063899405,
+					lng: state.lng || 103.81760895252228,
 				}}
 			>
 				<Marker
 					position={{
-						lat: state.lat,
-						lng: state.lng,
+						lat: state.lat || 1.2864939063899405,
+						lng: state.lng || 103.81760895252228,
 					}}
 					draggable
 					onDragEnd={handleDragEnd}

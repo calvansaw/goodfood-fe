@@ -31,23 +31,25 @@ const PublicHome = ({ stores, locations }) => {
 				</Grid>
 			</Grid>
 			<Grid item xs={6}>
-				<Map
-					googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_MAP_API_KEY}&v=3.exp&libraries=geometry,drawing,places`}
-					loadingElement={<div style={{ height: `100%` }} />}
-					containerElement={
-						<div
-							style={{
-								position: 'fixed',
-								width: '45%',
-								height: '60%',
-								top: '15%',
-								right: '2%',
-							}}
-						/>
-					}
-					mapElement={<div style={{ height: `100%` }} />}
-					storeLocations={locations}
-				/>
+				{locations && (
+					<Map
+						googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_MAP_API_KEY}&v=3.exp&libraries=geometry,drawing,places`}
+						loadingElement={<div style={{ height: `100%` }} />}
+						containerElement={
+							<div
+								style={{
+									position: 'fixed',
+									width: '45%',
+									height: '60%',
+									top: '15%',
+									right: '2%',
+								}}
+							/>
+						}
+						mapElement={<div style={{ height: `100%` }} />}
+						storeLocations={locations}
+					/>
+				)}
 				<Button
 					onClick={() => queryClient.invalidateQueries(LOCATIONS)}
 				>

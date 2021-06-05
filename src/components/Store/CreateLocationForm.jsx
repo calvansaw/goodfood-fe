@@ -52,7 +52,6 @@ const CreateLocationForm = () => {
 					variant: 'success',
 				});
 				queryClient.invalidateQueries(ALL_LOCATIONS);
-				queryClient.invalidateQueries(LOCATIONS);
 				history.push('/store');
 			},
 		}

@@ -47,6 +47,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "proxy": {
+    "/api": {
+      "target": "https://calvan-proxy.herokuapp.com/https://goodfood-be.herokuapp.com",
+      "pathRewrite": {
+        "^/api": "/"
+      }
+    }
   }
   
 }
